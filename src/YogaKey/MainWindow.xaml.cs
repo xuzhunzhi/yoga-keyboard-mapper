@@ -2,10 +2,13 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 
 using Windows.Graphics;
+using Windows.System;
 
 using WinRT.Interop;
 
@@ -33,6 +36,13 @@ public sealed partial class MainWindow : Window
         Title = "YogaKey";
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
+
+        if (AppWindow.Presenter is OverlappedPresenter presenter)
+        {
+            presenter.PreferredMinimumWidth = 640;
+            presenter.PreferredMinimumHeight = 480;
+        }
+
         ResizeToDips(920, 820);
 
         _config = AppConfig.Load();
@@ -220,6 +230,15 @@ public sealed partial class MainWindow : Window
         _config.Save();
         RefreshList();
         ShowStatus($"已删除 0x{item.Code:X2}", InfoBarSeverity.Success);
+    }
+
+    private void OnListKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Delete)
+        {
+            OnDeleteClick(sender, e);
+            e.Handled = true;
+        }
     }
 
     private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
