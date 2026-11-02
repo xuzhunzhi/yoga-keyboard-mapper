@@ -1,5 +1,7 @@
 # YogaKey
 
+> 仓库：`yoga-keyboard-mapper` · 可执行文件：`YogaKey.exe`
+
 把 **Lenovo Yoga Book 9 蓝牙键盘**上那些「特殊键」（Copilot / 联想 / 星形 / 性能控制台等）重新映射成你想要的快捷键。
 
 Windows 上通常没人能改这些键 —— 因为它们**根本不产生按键事件**。
@@ -43,8 +45,8 @@ YogaKey 直接以 **Raw Input** 读取这份 HID 报告，拿到厂商键码后�
 - [Windows App SDK 1.8 运行时](https://learn.microsoft.com/windows/apps/windows-app-sdk/downloads)
 
 ```powershell
-git clone https://github.com/<you>/YogaKey.git
-cd YogaKey
+git clone https://github.com/<you>/yoga-keyboard-mapper.git
+cd yoga-keyboard-mapper
 dotnet build src\YogaKey\YogaKey.csproj -c Release -p:Platform=x64
 ```
 
