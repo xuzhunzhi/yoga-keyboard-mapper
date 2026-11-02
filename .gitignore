@@ -1,0 +1,14 @@
+# build
+bin/
+obj/
+artifacts/
+*.user
+*.suo
+.vs/
+.vscode/
+*.binlog
+
+# test / local
+*.log
+*.tmp
+.DS_Store
