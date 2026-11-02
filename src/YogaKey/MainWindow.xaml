@@ -13,7 +13,7 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <Grid x:Name="RootGrid">
+    <Grid x:Name="RootGrid" SizeChanged="OnRootGridSizeChanged">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -36,17 +36,20 @@
                  Grid.Row="1"
                  IsOpen="False"
                  IsClosable="True"
-                 MaxWidth="960"
-                 Margin="32,0,32,8"
+                 AutomationProperties.LiveSetting="Assertive"
+                 Margin="0,0,0,8"
                  HorizontalAlignment="Center" />
 
         <ScrollViewer Grid.Row="2"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled">
-            <StackPanel MaxWidth="960"
+            <!-- The width is assigned from code (see OnRootGridSizeChanged) instead of
+                 MaxWidth + Stretch: that combination is what clipped the page whenever
+                 the window size or the DPI changed. -->
+            <StackPanel x:Name="PagePanel"
                         Padding="32,8,32,28"
                         Spacing="24"
-                        HorizontalAlignment="Stretch">
+                        HorizontalAlignment="Center">
 
                 <!-- Page header -->
                 <StackPanel Spacing="4">
@@ -60,16 +63,11 @@
                 <!-- Mapping section -->
                 <StackPanel Spacing="8">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
                         <TextBlock Text="按键映射"
                                    Style="{StaticResource BodyStrongTextBlockStyle}"
                                    VerticalAlignment="Center" />
 
-                        <CommandBar Grid.Column="1"
+                        <CommandBar HorizontalAlignment="Right"
                                     DefaultLabelPosition="Right"
                                     IsOpen="False"
                                     Background="Transparent"
@@ -111,7 +109,6 @@
                                 CornerRadius="8">
                             <ListView x:Name="MappingsList"
                                       SelectionMode="Single"
-                                      DoubleTapped="OnListDoubleTapped"
                                       KeyDown="OnListKeyDown"
                                       SelectionChanged="OnSelectionChanged"
                                       Background="Transparent"
@@ -121,32 +118,36 @@
                                       AutomationProperties.Name="按键映射列表">
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="core:MappingItem">
-                                        <Grid ColumnSpacing="16"
-                                              Padding="4,10"
-                                              AutomationProperties.Name="{x:Bind AccessibleText}">
+                                        <Grid ColumnSpacing="12"
+                                              Padding="4,8"
+                                              AutomationProperties.Name="{x:Bind AccessibleText}"
+                                              ToolTipService.ToolTip="{x:Bind ActionText}"
+                                              DoubleTapped="OnRowDoubleTapped">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
 
-                                            <Border Width="60"
-                                                    Height="32"
-                                                    Background="{ThemeResource ControlFillColorSecondaryBrush}"
-                                                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                                                    BorderThickness="1"
-                                                    CornerRadius="6"
-                                                    VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind CodeText}"
-                                                           FontFamily="Consolas"
-                                                           FontSize="12"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center" />
-                                            </Border>
+                                            <Grid.ContextFlyout>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem Text="编辑" Click="OnRowEditClick" />
+                                                    <MenuFlyoutItem Text="删除" Click="OnRowDeleteClick" />
+                                                </MenuFlyout>
+                                            </Grid.ContextFlyout>
 
-                                            <TextBlock Grid.Column="1"
-                                                       Text="{x:Bind ActionText}"
-                                                       VerticalAlignment="Center"
-                                                       TextTrimming="CharacterEllipsis" />
+                                            <FontIcon Glyph="&#xE765;"
+                                                      FontSize="16"
+                                                      VerticalAlignment="Center"
+                                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                      IsHitTestVisible="False" />
+
+                                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind ActionText}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{x:Bind KeyLabel}"
+                                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                            </StackPanel>
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>

@@ -45,7 +45,7 @@ public sealed partial class MainWindow : Window
             presenter.PreferredMinimumHeight = 480;
         }
 
-        ResizeToDips(920, 820);
+        ResizeAndCenter(920, 820);
 
         _config = AppConfig.Load();
         MappingsList.ItemsSource = _items;
@@ -75,7 +75,27 @@ public sealed partial class MainWindow : Window
         Log.Write($"app started, device={_config.DeviceMatch}, collection={_config.CollectionMatch}");
     }
 
-    private void ResizeToDips(int width, int height)
+    private void OnRootGridSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        // Explicit width beats MaxWidth + Stretch: the layout engine stays correct at
+        // every window size, DPI and monitor arrangement, and the column stays centred.
+        double width = e.NewSize.Width;
+        if (width <= 0)
+        {
+            return;
+        }
+
+        double column = Math.Max(Math.Min(width, 1000.0), 320.0);
+        PagePanel.Width = column;
+        StatusBar.Width = Math.Max(column - 64.0, 256.0);
+    }
+
+    /// <summary>
+    /// Sizes the window in DIPs, clamped to the work area, then centres it.
+    /// AppWindow.Resize takes physical pixels, so the DPI scale has to be applied
+    /// here or the window overflows the screen after a resolution/DPI change.
+    /// </summary>
+    private void ResizeAndCenter(int widthDips, int heightDips)
     {
         IntPtr hwnd = WindowNative.GetWindowHandle(this);
         uint dpi = GetDpiForWindow(hwnd);
@@ -85,9 +105,14 @@ public sealed partial class MainWindow : Window
         int maxWidth = Math.Max(display.WorkArea.Width - 48, 480);
         int maxHeight = Math.Max(display.WorkArea.Height - 48, 360);
 
-        AppWindow.Resize(new SizeInt32(
-            Math.Min((int)(width * scale), maxWidth),
-            Math.Min((int)(height * scale), maxHeight)));
+        int width = Math.Min((int)(widthDips * scale), maxWidth);
+        int height = Math.Min((int)(heightDips * scale), maxHeight);
+
+        AppWindow.Resize(new SizeInt32(width, height));
+
+        int x = display.WorkArea.X + (display.WorkArea.Width - width) / 2;
+        int y = display.WorkArea.Y + (display.WorkArea.Height - height) / 2;
+        AppWindow.Move(new PointInt32(Math.Max(x, 0), Math.Max(y, 0)));
     }
 
     // ---------------------------------------------------------------- listener
@@ -127,7 +152,7 @@ public sealed partial class MainWindow : Window
         }
 
         _config.ListenOnStartup = ListenToggle.IsOn;
-        _config.Save();
+        TrySave();
     }
 
     private void OnSpecialKey(byte code)
@@ -168,11 +193,30 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private void OnListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    private void OnRowDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
-        if (MappingsList.SelectedItem is MappingItem item)
+        // Hit test on the row itself: double-clicking the empty space under the
+        // last row must not open whatever happens to be selected.
+        if (sender is FrameworkElement { DataContext: MappingItem item })
         {
+            e.Handled = true;
             _ = ShowEditorAsync(item.Code, item.Action);
+        }
+    }
+
+    private async void OnRowEditClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: MappingItem item })
+        {
+            await ShowEditorAsync(item.Code, item.Action);
+        }
+    }
+
+    private async void OnRowDeleteClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: MappingItem item })
+        {
+            await DeleteMappingAsync(item);
         }
     }
 
@@ -243,7 +287,11 @@ public sealed partial class MainWindow : Window
             existing.Action = action;
         }
 
-        _config.Save();
+        if (!TrySave())
+        {
+            return;
+        }
+
         RefreshList();
 
         MappingItem? saved = _items.FirstOrDefault(i => i.Code == code);
@@ -258,7 +306,15 @@ public sealed partial class MainWindow : Window
 
     private async void OnDeleteClick(object sender, RoutedEventArgs e)
     {
-        if (_dialogOpen || MappingsList.SelectedItem is not MappingItem item)
+        if (MappingsList.SelectedItem is MappingItem item)
+        {
+            await DeleteMappingAsync(item);
+        }
+    }
+
+    private async Task DeleteMappingAsync(MappingItem item)
+    {
+        if (_dialogOpen)
         {
             return;
         }
@@ -270,7 +326,7 @@ public sealed partial class MainWindow : Window
             {
                 XamlRoot = RootGrid.XamlRoot,
                 Title = "删除映射？",
-                Content = $"{item.CodeText} → {item.ActionText}",
+                Content = $"{item.KeyLabel} → {item.ActionText}",
                 PrimaryButtonText = "删除",
                 CloseButtonText = "取消",
                 DefaultButton = ContentDialogButton.Close,
@@ -291,14 +347,13 @@ public sealed partial class MainWindow : Window
         }
 
         int removed = _config.Mappings.RemoveAll(m => m.Code == item.Code);
-        if (removed == 0)
+        if (removed == 0 || !TrySave())
         {
             return;
         }
 
-        _config.Save();
         RefreshList();
-        ShowStatus($"已删除 {item.CodeText}", InfoBarSeverity.Success);
+        ShowStatus($"已删除 {item.KeyLabel}", InfoBarSeverity.Success);
     }
 
     private void OnListKeyDown(object sender, KeyRoutedEventArgs e)
@@ -346,19 +401,31 @@ public sealed partial class MainWindow : Window
         ListCard.Visibility = empty ? Visibility.Collapsed : Visibility.Visible;
         EmptyPanel.Visibility = empty ? Visibility.Visible : Visibility.Collapsed;
 
-        if (previous >= 0)
+        if (!empty)
         {
-            MappingItem? restored = _items.FirstOrDefault(i => i.Code == previous);
-            if (restored is not null)
-            {
-                MappingsList.SelectedItem = restored;
-            }
+            MappingItem? restored = previous >= 0 ? _items.FirstOrDefault(i => i.Code == previous) : null;
+            MappingsList.SelectedItem = restored ?? _items[0];
         }
 
         UpdateSelectionState();
     }
 
     // ---------------------------------------------------------------- settings
+
+    private bool TrySave()
+    {
+        try
+        {
+            _config.Save();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Log.Write("save error: " + ex.Message);
+            ShowStatus($"保存配置失败：{ex.Message}", InfoBarSeverity.Error);
+            return false;
+        }
+    }
 
     private void OnAutoStartToggled(object sender, RoutedEventArgs e)
     {
@@ -369,7 +436,7 @@ public sealed partial class MainWindow : Window
 
         AutoStart.Set(AutoStartToggle.IsOn);
         _config.StartWithWindows = AutoStartToggle.IsOn;
-        _config.Save();
+        TrySave();
         ShowStatus(AutoStartToggle.IsOn ? "已设置开机自启。" : "已取消开机自启。", InfoBarSeverity.Informational);
     }
 
@@ -386,11 +453,15 @@ public sealed partial class MainWindow : Window
 
         _config.DeviceMatch = device;
         _config.CollectionMatch = collection;
-        _config.Save();
 
         // Show the normalised value instead of whatever the user typed.
         DeviceMatchBox.Text = device;
         CollectionBox.Text = collection;
+
+        if (!TrySave())
+        {
+            return;
+        }
 
         _listener.Stop();
         bool ok = StartListening();

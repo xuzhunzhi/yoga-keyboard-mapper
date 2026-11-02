@@ -9,9 +9,14 @@ public sealed class MappingItem
 
     public string CodeText => FormatCode(Code);
 
+    public string KeyLabel => $"特殊键 {CodeText}";
+
     public static string FormatCode(int code) => $"0x{code:X2}";
 
     public string ActionText => ActionPresets.Describe(Action);
 
-    public string AccessibleText => $"特殊键 {CodeText}，动作 {ActionText}";
+    public string AccessibleText => $"{KeyLabel}，动作 {ActionText}";
+
+    // The ListView item automation peer falls back to ToString(), so make it readable.
+    public override string ToString() => AccessibleText;
 }
