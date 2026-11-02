@@ -103,6 +103,7 @@ src\YogaKey\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\YogaKey.exe
 
 - **按了没反应**：点「开始捕获」再按，看是否出现键码。没有键码说明这颗键不是通过 HID 报告发出的，YogaKey 帮不了。
 - **任务管理器没弹出，但日志有记录**：前台窗口可能以管理员权限运行，Windows 的 UIPI 会拦掉 `SendInput`。
+- **普通按键变得像按着什么 Win/Ctrl 快捷键**：说明修饰键被逻辑卡住了（程序在按键按下与抬起之间被关闭就会这样）。按一下对应的修饰键即可恢复；1.0 起整段组合键用**一次** `SendInput` 发出，且启动/退出时会主动释放所有修饰键。
 - 日志：`%LOCALAPPDATA%\YogaKey\app.log`
 
 ---

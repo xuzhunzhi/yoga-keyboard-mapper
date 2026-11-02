@@ -104,23 +104,35 @@ public static class KeySender
             return false;
         }
 
-        var down = new INPUT[keys.Count];
-        var up = new INPUT[keys.Count];
+        // The whole chord goes out in ONE SendInput call on purpose. When the key-down
+        // and key-up batches were separate calls, anything that dropped or blocked the
+        // second call (app closing, UIPI, a lock screen) left the modifier logically
+        // held down - and then every normal key behaves like a Win/Ctrl shortcut.
+        var inputs = new INPUT[keys.Count * 2];
         for (int i = 0; i < keys.Count; i++)
         {
-            down[i] = MakeInput(keys[i], false);
-            up[i] = MakeInput(keys[keys.Count - 1 - i], true);
+            inputs[i] = MakeInput(keys[i], false);
+            inputs[inputs.Length - 1 - i] = MakeInput(keys[i], true);
         }
 
-        uint sent = SendInput((uint)down.Length, down, Marshal.SizeOf<INPUT>());
-        if (sent == 0)
+        uint sent = SendInput((uint)inputs.Length, inputs, Marshal.SizeOf<INPUT>());
+        return sent == inputs.Length;
+    }
+
+    /// <summary>
+    /// Safety net: release every modifier key. Called on startup and shutdown so a
+    /// crash or a killed process can never leave the user typing with a stuck Win key.
+    /// </summary>
+    public static void ReleaseModifiers()
+    {
+        ushort[] modifiers = { 0x5B, 0x5C, 0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5 };
+        var inputs = new INPUT[modifiers.Length];
+        for (int i = 0; i < modifiers.Length; i++)
         {
-            return false;
+            inputs[i] = MakeInput(modifiers[i], true);
         }
 
-        Thread.Sleep(20);
-        SendInput((uint)up.Length, up, Marshal.SizeOf<INPUT>());
-        return true;
+        SendInput((uint)inputs.Length, inputs, Marshal.SizeOf<INPUT>());
     }
 
     private static INPUT MakeInput(ushort vk, bool keyUp)

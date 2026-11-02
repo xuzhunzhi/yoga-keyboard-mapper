@@ -39,6 +39,10 @@ public sealed partial class MainWindow : Window
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
 
+        // If a previous run died between a key-down and its key-up, the user is
+        // typing with a stuck modifier right now - clear it immediately.
+        KeySender.ReleaseModifiers();
+
         if (AppWindow.Presenter is OverlappedPresenter presenter)
         {
             presenter.PreferredMinimumWidth = 640;
@@ -69,6 +73,7 @@ public sealed partial class MainWindow : Window
         Closed += (_, _) =>
         {
             Log.Write("window closed");
+            KeySender.ReleaseModifiers();
             _listener.Dispose();
         };
 
