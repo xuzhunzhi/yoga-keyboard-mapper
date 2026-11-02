@@ -22,6 +22,9 @@ public sealed class AppConfig
 
     public bool StartWithWindows { get; set; }
 
+    /// <summary>Whether the raw-input listener should be active after a restart.</summary>
+    public bool ListenOnStartup { get; set; } = true;
+
     public List<KeyMapping> Mappings { get; set; } = new();
 
     public static string Folder =>

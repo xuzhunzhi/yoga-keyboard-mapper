@@ -23,8 +23,10 @@ public sealed partial class MainWindow : Window
 
     private AppConfig _config = new();
     private EditKeyDialog? _captureDialog;
+    private bool _dialogOpen;
     private bool _initializing;
     private bool _ready;
+    private int _statusToken;
 
     [DllImport("user32.dll")]
     private static extern uint GetDpiForWindow(IntPtr hwnd);
@@ -50,14 +52,18 @@ public sealed partial class MainWindow : Window
         _listener.SpecialKeyPressed += OnSpecialKey;
 
         _initializing = true;
-        ListenToggle.IsOn = true;
+        ListenToggle.IsOn = _config.ListenOnStartup;
         AutoStartToggle.IsOn = AutoStart.IsEnabled();
         DeviceMatchBox.Text = _config.DeviceMatch;
         CollectionBox.Text = _config.CollectionMatch;
         _initializing = false;
 
         _ready = true;
-        StartListening();
+        if (ListenToggle.IsOn)
+        {
+            StartListening();
+        }
+
         RefreshList();
 
         Closed += (_, _) =>
@@ -74,12 +80,19 @@ public sealed partial class MainWindow : Window
         IntPtr hwnd = WindowNative.GetWindowHandle(this);
         uint dpi = GetDpiForWindow(hwnd);
         double scale = dpi == 0 ? 1.0 : dpi / 96.0;
-        AppWindow.Resize(new SizeInt32((int)(width * scale), (int)(height * scale)));
+
+        DisplayArea display = DisplayArea.GetFromWindowId(AppWindow.Id, DisplayAreaFallback.Primary);
+        int maxWidth = Math.Max(display.WorkArea.Width - 48, 480);
+        int maxHeight = Math.Max(display.WorkArea.Height - 48, 360);
+
+        AppWindow.Resize(new SizeInt32(
+            Math.Min((int)(width * scale), maxWidth),
+            Math.Min((int)(height * scale), maxHeight)));
     }
 
     // ---------------------------------------------------------------- listener
 
-    private void StartListening()
+    private bool StartListening()
     {
         bool ok = _listener.IsRunning || _listener.Start(_config.DeviceMatch, _config.CollectionMatch);
 
@@ -90,8 +103,10 @@ public sealed partial class MainWindow : Window
         Log.Write($"listener start => {ok}");
         if (!ok)
         {
-            ShowStatus("监听启动失败：Raw Input 注册被拒绝。", InfoBarSeverity.Error);
+            ShowStatus("监听启动失败：检查 Yoga Book 键盘是否已连接，或到「高级」核对设备匹配。", InfoBarSeverity.Error);
         }
+
+        return ok;
     }
 
     private void OnListenToggled(object sender, RoutedEventArgs e)
@@ -110,6 +125,9 @@ public sealed partial class MainWindow : Window
             _listener.Stop();
             ShowStatus("已暂停监听。", InfoBarSeverity.Informational);
         }
+
+        _config.ListenOnStartup = ListenToggle.IsOn;
+        _config.Save();
     }
 
     private void OnSpecialKey(byte code)
@@ -150,9 +168,9 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private void OnItemClick(object sender, ItemClickEventArgs e)
+    private void OnListDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
-        if (e.ClickedItem is MappingItem item)
+        if (MappingsList.SelectedItem is MappingItem item)
         {
             _ = ShowEditorAsync(item.Code, item.Action);
         }
@@ -160,23 +178,46 @@ public sealed partial class MainWindow : Window
 
     private async Task ShowEditorAsync(int? code, string? action)
     {
-        var dialog = new EditKeyDialog(code, action)
+        if (_dialogOpen)
         {
-            XamlRoot = RootGrid.XamlRoot,
-        };
-
-        dialog.CaptureRequested += OnDialogCaptureRequested;
-        ContentDialogResult result = await dialog.ShowAsync();
-        dialog.CaptureRequested -= OnDialogCaptureRequested;
-
-        if (ReferenceEquals(_captureDialog, dialog))
-        {
-            _captureDialog = null;
+            return;
         }
 
-        if (result == ContentDialogResult.Primary && dialog.Code is int captured)
+        _dialogOpen = true;
+        EditKeyDialog? dialog = null;
+        try
         {
-            SaveMapping(captured, dialog.Action);
+            dialog = new EditKeyDialog(code, action)
+            {
+                XamlRoot = RootGrid.XamlRoot,
+            };
+
+            dialog.CaptureRequested += OnDialogCaptureRequested;
+            ContentDialogResult result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary && dialog.Code is int captured)
+            {
+                SaveMapping(captured, dialog.Action);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Write("editor error: " + ex.Message);
+            ShowStatus("编辑窗口打开失败，请重试。", InfoBarSeverity.Error);
+        }
+        finally
+        {
+            if (dialog is not null)
+            {
+                dialog.CaptureRequested -= OnDialogCaptureRequested;
+            }
+
+            if (ReferenceEquals(_captureDialog, dialog))
+            {
+                _captureDialog = null;
+            }
+
+            _dialogOpen = false;
         }
     }
 
@@ -209,16 +250,44 @@ public sealed partial class MainWindow : Window
         if (saved is not null)
         {
             MappingsList.SelectedItem = saved;
+            MappingsList.ScrollIntoView(saved);
         }
 
-        ShowStatus($"已保存 0x{code:X2} → {action}", InfoBarSeverity.Success);
+        ShowStatus($"已保存 {MappingItem.FormatCode(code)} → {action}", InfoBarSeverity.Success);
     }
 
-    private void OnDeleteClick(object sender, RoutedEventArgs e)
+    private async void OnDeleteClick(object sender, RoutedEventArgs e)
     {
-        if (MappingsList.SelectedItem is not MappingItem item)
+        if (_dialogOpen || MappingsList.SelectedItem is not MappingItem item)
         {
             return;
+        }
+
+        _dialogOpen = true;
+        try
+        {
+            var confirm = new ContentDialog
+            {
+                XamlRoot = RootGrid.XamlRoot,
+                Title = "删除映射？",
+                Content = $"{item.CodeText} → {item.ActionText}",
+                PrimaryButtonText = "删除",
+                CloseButtonText = "取消",
+                DefaultButton = ContentDialogButton.Close,
+            };
+
+            if (await confirm.ShowAsync() != ContentDialogResult.Primary)
+            {
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Write("delete dialog error: " + ex.Message);
+        }
+        finally
+        {
+            _dialogOpen = false;
         }
 
         int removed = _config.Mappings.RemoveAll(m => m.Code == item.Code);
@@ -229,19 +298,34 @@ public sealed partial class MainWindow : Window
 
         _config.Save();
         RefreshList();
-        ShowStatus($"已删除 0x{item.Code:X2}", InfoBarSeverity.Success);
+        ShowStatus($"已删除 {item.CodeText}", InfoBarSeverity.Success);
     }
 
     private void OnListKeyDown(object sender, KeyRoutedEventArgs e)
     {
+        if (MappingsList.SelectedItem is not MappingItem item)
+        {
+            return;
+        }
+
         if (e.Key == VirtualKey.Delete)
         {
             OnDeleteClick(sender, e);
             e.Handled = true;
         }
+        else if (e.Key == VirtualKey.Enter)
+        {
+            _ = ShowEditorAsync(item.Code, item.Action);
+            e.Handled = true;
+        }
     }
 
     private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        UpdateSelectionState();
+    }
+
+    private void UpdateSelectionState()
     {
         bool hasSelection = MappingsList.SelectedItem is MappingItem;
         EditButton.IsEnabled = hasSelection;
@@ -258,14 +342,20 @@ public sealed partial class MainWindow : Window
             _items.Add(new MappingItem { Code = mapping.Code, Action = mapping.Action });
         }
 
-        EmptyText.Visibility = _items.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        bool empty = _items.Count == 0;
+        ListCard.Visibility = empty ? Visibility.Collapsed : Visibility.Visible;
+        EmptyPanel.Visibility = empty ? Visibility.Visible : Visibility.Collapsed;
 
         if (previous >= 0)
         {
-            MappingsList.SelectedItem = _items.FirstOrDefault(i => i.Code == previous);
+            MappingItem? restored = _items.FirstOrDefault(i => i.Code == previous);
+            if (restored is not null)
+            {
+                MappingsList.SelectedItem = restored;
+            }
         }
 
-        OnSelectionChanged(this, null!);
+        UpdateSelectionState();
     }
 
     // ---------------------------------------------------------------- settings
@@ -278,18 +368,37 @@ public sealed partial class MainWindow : Window
         }
 
         AutoStart.Set(AutoStartToggle.IsOn);
+        _config.StartWithWindows = AutoStartToggle.IsOn;
+        _config.Save();
         ShowStatus(AutoStartToggle.IsOn ? "已设置开机自启。" : "已取消开机自启。", InfoBarSeverity.Informational);
     }
 
     private void OnApplyDeviceClick(object sender, RoutedEventArgs e)
     {
-        _config.DeviceMatch = DeviceMatchBox.Text.Trim();
-        _config.CollectionMatch = CollectionBox.Text.Trim();
+        string device = DeviceMatchBox.Text.Trim();
+        string collection = CollectionBox.Text.Trim();
+
+        if (device.Length == 0 && collection.Length == 0)
+        {
+            ShowStatus("设备匹配不能全部留空，否则会拦截所有键盘。", InfoBarSeverity.Warning);
+            return;
+        }
+
+        _config.DeviceMatch = device;
+        _config.CollectionMatch = collection;
         _config.Save();
 
+        // Show the normalised value instead of whatever the user typed.
+        DeviceMatchBox.Text = device;
+        CollectionBox.Text = collection;
+
         _listener.Stop();
-        StartListening();
-        ShowStatus("设备匹配已应用。", InfoBarSeverity.Success);
+        bool ok = StartListening();
+
+        // StartListening already raised the error InfoBar; do not overwrite it with "applied".
+        ShowStatus(
+            ok ? "设备匹配已应用。" : "设备匹配已保存，但监听没有启动成功。",
+            ok ? InfoBarSeverity.Success : InfoBarSeverity.Error);
     }
 
     private void OnOpenFolderClick(object sender, RoutedEventArgs e)
@@ -298,10 +407,30 @@ public sealed partial class MainWindow : Window
         Process.Start(new ProcessStartInfo("explorer.exe", AppConfig.Folder) { UseShellExecute = true });
     }
 
-    private void ShowStatus(string message, InfoBarSeverity severity)
+    private async void ShowStatus(string message, InfoBarSeverity severity)
     {
         StatusBar.Message = message;
         StatusBar.Severity = severity;
         StatusBar.IsOpen = true;
+
+        int token = ++_statusToken;
+        if (severity == InfoBarSeverity.Error)
+        {
+            return; // errors stay until the user closes them
+        }
+
+        try
+        {
+            await Task.Delay(5000);
+        }
+        catch
+        {
+            return;
+        }
+
+        if (token == _statusToken)
+        {
+            StatusBar.IsOpen = false;
+        }
     }
 }

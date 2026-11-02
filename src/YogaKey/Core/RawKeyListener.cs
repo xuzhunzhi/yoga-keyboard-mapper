@@ -125,7 +125,12 @@ public sealed class RawKeyListener : IDisposable
             }
         }
 
-        RegisterDevices(RIDEV_INPUTSINK);
+        if (!RegisterDevices(RIDEV_INPUTSINK))
+        {
+            IsRunning = false;
+            return false;
+        }
+
         IsRunning = true;
         return true;
     }
@@ -141,8 +146,9 @@ public sealed class RawKeyListener : IDisposable
         IsRunning = false;
     }
 
-    private void RegisterDevices(uint flags)
+    private bool RegisterDevices(uint flags)
     {
+        bool allOk = true;
         // Yoga Book 9 keyboard collections: keyboard (1/6), system control (1/80),
         // consumer control (0C/1). The vendor reports arrive through one of them.
         (ushort page, ushort usage)[] usages =
@@ -161,8 +167,13 @@ public sealed class RawKeyListener : IDisposable
                 dwFlags = flags,
                 hwndTarget = _hwnd,
             };
-            RegisterRawInputDevices(new[] { device }, 1, (uint)Marshal.SizeOf<RAWINPUTDEVICE>());
+            if (!RegisterRawInputDevices(new[] { device }, 1, (uint)Marshal.SizeOf<RAWINPUTDEVICE>()))
+            {
+                allOk = false;
+            }
         }
+
+        return allOk;
     }
 
     private IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)

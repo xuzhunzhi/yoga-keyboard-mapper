@@ -16,23 +16,36 @@
     <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- Custom title bar -->
         <Grid x:Name="AppTitleBar" Grid.Row="0" Height="48" Padding="16,0">
             <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <FontIcon Glyph="&#xE765;" FontSize="16" />
+                <FontIcon Glyph="&#xE765;"
+                          FontSize="16"
+                          IsHitTestVisible="False"
+                          AutomationProperties.AccessibilityView="Raw" />
                 <TextBlock Text="YogaKey" FontSize="12" VerticalAlignment="Center" />
             </StackPanel>
         </Grid>
 
-        <ScrollViewer Grid.Row="1"
+        <!-- Status bar: kept outside the scroll area so feedback never scrolls away -->
+        <InfoBar x:Name="StatusBar"
+                 Grid.Row="1"
+                 IsOpen="False"
+                 IsClosable="True"
+                 MaxWidth="960"
+                 Margin="32,0,32,8"
+                 HorizontalAlignment="Center" />
+
+        <ScrollViewer Grid.Row="2"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled">
             <StackPanel MaxWidth="960"
                         Padding="32,8,32,28"
-                        Spacing="16"
+                        Spacing="24"
                         HorizontalAlignment="Stretch">
 
                 <!-- Page header -->
@@ -40,133 +53,162 @@
                     <TextBlock Text="特殊键映射" Style="{StaticResource TitleTextBlockStyle}" />
                     <TextBlock Text="按一下 Yoga Book 蓝牙键盘上的特殊键，把它换成你想要的快捷键。"
                                Style="{StaticResource BodyTextBlockStyle}"
-                               Opacity="0.7"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                TextWrapping="Wrap" />
                 </StackPanel>
 
-                <InfoBar x:Name="StatusBar"
-                         IsOpen="False"
-                         IsClosable="True" />
+                <!-- Mapping section -->
+                <StackPanel Spacing="8">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-                <!-- Section header + toolbar -->
-                <Grid Margin="0,4,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                        <TextBlock Text="按键映射"
+                                   Style="{StaticResource BodyStrongTextBlockStyle}"
+                                   VerticalAlignment="Center" />
 
-                    <TextBlock Text="按键映射"
-                               Style="{StaticResource BodyStrongTextBlockStyle}"
-                               VerticalAlignment="Center" />
+                        <CommandBar Grid.Column="1"
+                                    DefaultLabelPosition="Right"
+                                    IsOpen="False"
+                                    Background="Transparent"
+                                    Padding="0"
+                                    VerticalAlignment="Center">
+                            <AppBarButton x:Name="AddButton"
+                                          Icon="Add"
+                                          Label="新增"
+                                          KeyboardAcceleratorTextOverride="Ctrl+N"
+                                          Click="OnAddClick">
+                                <AppBarButton.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="N" Modifiers="Control" />
+                                </AppBarButton.KeyboardAccelerators>
+                            </AppBarButton>
+                            <AppBarButton x:Name="EditButton"
+                                          Icon="Edit"
+                                          Label="编辑"
+                                          KeyboardAcceleratorTextOverride="F2"
+                                          Click="OnEditClick"
+                                          IsEnabled="False">
+                                <AppBarButton.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="F2" />
+                                </AppBarButton.KeyboardAccelerators>
+                            </AppBarButton>
+                            <AppBarButton x:Name="DeleteButton"
+                                          Icon="Delete"
+                                          Label="删除"
+                                          Click="OnDeleteClick"
+                                          IsEnabled="False" />
+                        </CommandBar>
+                    </Grid>
 
-                    <CommandBar Grid.Column="1"
-                                DefaultLabelPosition="Right"
-                                IsOpen="False"
-                                Background="Transparent"
-                                Padding="0"
-                                VerticalAlignment="Center">
-                        <AppBarButton x:Name="AddButton" Icon="Add" Label="新增" Click="OnAddClick">
-                            <AppBarButton.KeyboardAccelerators>
-                                <KeyboardAccelerator Key="N" Modifiers="Control" />
-                            </AppBarButton.KeyboardAccelerators>
-                        </AppBarButton>
-                        <AppBarButton x:Name="EditButton" Icon="Edit" Label="编辑" Click="OnEditClick" IsEnabled="False">
-                            <AppBarButton.KeyboardAccelerators>
-                                <KeyboardAccelerator Key="F2" />
-                            </AppBarButton.KeyboardAccelerators>
-                        </AppBarButton>
-                        <AppBarButton x:Name="DeleteButton" Icon="Delete" Label="删除" Click="OnDeleteClick" IsEnabled="False" />
-                    </CommandBar>
-                </Grid>
+                    <Grid>
+                        <Border x:Name="ListCard"
+                                VerticalAlignment="Top"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8">
+                            <ListView x:Name="MappingsList"
+                                      SelectionMode="Single"
+                                      DoubleTapped="OnListDoubleTapped"
+                                      KeyDown="OnListKeyDown"
+                                      SelectionChanged="OnSelectionChanged"
+                                      Background="Transparent"
+                                      MinHeight="72"
+                                      MaxHeight="320"
+                                      Padding="4"
+                                      AutomationProperties.Name="按键映射列表">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="core:MappingItem">
+                                        <Grid ColumnSpacing="16"
+                                              Padding="4,10"
+                                              AutomationProperties.Name="{x:Bind AccessibleText}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
 
-                <!-- Mapping list -->
-                <Grid>
-                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                            BorderThickness="1"
-                            CornerRadius="8">
-                        <ListView x:Name="MappingsList"
-                                  SelectionMode="Single"
-                                  IsItemClickEnabled="True"
-                                  ItemClick="OnItemClick"
-                                  SelectionChanged="OnSelectionChanged"
-                                  KeyDown="OnListKeyDown"
-                                  Background="Transparent"
-                                  MinHeight="88"
-                                  MaxHeight="320"
-                                  Padding="4">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="core:MappingItem">
-                                    <Grid ColumnSpacing="16" Padding="4,10">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
+                                            <Border Width="60"
+                                                    Height="32"
+                                                    Background="{ThemeResource ControlFillColorSecondaryBrush}"
+                                                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="6"
+                                                    VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind CodeText}"
+                                                           FontFamily="Consolas"
+                                                           FontSize="12"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" />
+                                            </Border>
 
-                                        <Border Width="60"
-                                                Height="32"
-                                                Background="{ThemeResource ControlFillColorSecondaryBrush}"
-                                                BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                                                BorderThickness="1"
-                                                CornerRadius="6"
-                                                VerticalAlignment="Center">
-                                            <TextBlock Text="{x:Bind CodeText}"
-                                                       FontFamily="Consolas"
-                                                       FontSize="12"
-                                                       HorizontalAlignment="Center"
-                                                       VerticalAlignment="Center" />
-                                        </Border>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{x:Bind ActionText}"
+                                                       VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Border>
 
-                                        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-                                            <TextBlock Text="{x:Bind ActionText}" TextTrimming="CharacterEllipsis" />
-                                        </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </Border>
-
-                    <TextBlock x:Name="EmptyText"
-                               Text="还没有映射，点右上角「新增」开始"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               Opacity="0.6"
-                               IsHitTestVisible="False" />
-                </Grid>
-
-                <!-- Settings -->
-                <TextBlock Text="常规" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="0,12,0,0" />
-
-                <StackPanel Spacing="4">
-                <controls:SettingsCard Header="监听特殊键" Description="关闭后不再拦截键盘">
-                    <ToggleSwitch x:Name="ListenToggle" IsOn="True" Toggled="OnListenToggled" />
-                </controls:SettingsCard>
-
-                <controls:SettingsCard Header="开机自启" Description="登录 Windows 后自动运行">
-                    <ToggleSwitch x:Name="AutoStartToggle" Toggled="OnAutoStartToggled" />
-                </controls:SettingsCard>
-
-                <controls:SettingsCard Header="配置文件" Description="config.json">
-                    <Button Content="打开文件夹" Click="OnOpenFolderClick" />
-                </controls:SettingsCard>
+                        <StackPanel x:Name="EmptyPanel"
+                                    Spacing="12"
+                                    MinHeight="160"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Visibility="Collapsed">
+                            <TextBlock Text="还没有任何映射"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <Button Content="新增映射"
+                                    Click="OnAddClick"
+                                    Style="{StaticResource AccentButtonStyle}"
+                                    HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </Grid>
                 </StackPanel>
 
-                <Expander Header="高级" HorizontalAlignment="Stretch" Margin="0,8,0,0">
-                    <StackPanel Spacing="12" Padding="0,12,0,0">
-                        <TextBox x:Name="DeviceMatchBox"
-                                 Header="设备匹配 DeviceMatch"
-                                 PlaceholderText="FE5A42B74943（留空表示任意设备）" />
-                        <TextBox x:Name="CollectionBox"
-                                 Header="集合 CollectionMatch"
-                                 PlaceholderText="Col05（留空表示任意集合）" />
-                        <Button Content="应用并重启监听" Click="OnApplyDeviceClick" />
+                <!-- Settings -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="常规" Style="{StaticResource BodyStrongTextBlockStyle}" />
+
+                    <StackPanel Spacing="4">
+                        <controls:SettingsCard Header="监听特殊键" Description="关闭后不再拦截键盘">
+                            <ToggleSwitch x:Name="ListenToggle"
+                                          IsOn="True"
+                                          Toggled="OnListenToggled"
+                                          AutomationProperties.Name="监听特殊键" />
+                        </controls:SettingsCard>
+
+                        <controls:SettingsCard Header="开机自启" Description="登录 Windows 后自动运行">
+                            <ToggleSwitch x:Name="AutoStartToggle"
+                                          Toggled="OnAutoStartToggled"
+                                          AutomationProperties.Name="开机自启" />
+                        </controls:SettingsCard>
+
+                        <controls:SettingsCard Header="配置文件" Description="config.json">
+                            <Button Content="打开文件夹" Click="OnOpenFolderClick" />
+                        </controls:SettingsCard>
                     </StackPanel>
-                </Expander>
+
+                    <Expander Header="高级" HorizontalAlignment="Stretch">
+                        <StackPanel Spacing="12" Padding="0,12,0,0">
+                            <TextBox x:Name="DeviceMatchBox"
+                                     Header="设备匹配 DeviceMatch"
+                                     PlaceholderText="FE5A42B74943" />
+                            <TextBox x:Name="CollectionBox"
+                                     Header="集合 CollectionMatch"
+                                     PlaceholderText="Col05" />
+                            <Button Content="应用并重启监听" Click="OnApplyDeviceClick" />
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
 
                 <TextBlock Text="YogaKey 1.0.0 · MIT"
                            Style="{StaticResource CaptionTextBlockStyle}"
-                           Opacity="0.5"
-                           Margin="0,8,0,0" />
+                           Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
             </StackPanel>
         </ScrollViewer>
     </Grid>
