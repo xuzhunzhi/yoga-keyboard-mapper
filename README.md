@@ -31,8 +31,8 @@ YogaKey 直接以 **Raw Input** 读取这份 HID 报告，拿到厂商键码后�
 - 🪟 **原生 WinUI 3 界面**：Windows 11 风格（Mica、SettingsCard、ContentDialog），支持浅色/深色主题
 - ⌨️ 快捷键：`Ctrl+N` 新增、`F2` 编辑、`Delete` 删除
 - 🔍 **捕获**：按一下键盘上的特殊键，自动读出它的厂商键码（如 `0x12`）
-- 🧩 **映射**：每个键码绑定一个动作，预置任务管理器 / 锁屏 / 截图 / 切窗口 / 复制粘贴等
-- ⌨️ **自定义**：任意组合键（`ctrl+shift+t`）或启动程序（`run:calc`）
+- 🧩 **映射**：每个键码绑定一个动作，内置 **49 个预置动作**，按 系统 / 窗口 / 编辑 / 应用 / 文件 / 媒体 分组
+- ⌨️ **自定义**：任意组合键（`ctrl+shift+t`）、启动任意程序（点「选择程序…」直接挑 `.exe`，或写 `run:"C:\Program Files\App\App.exe"`）、打开网址（`url:https://…`）
 - 🚀 **开机自启**：勾选即可写注册表 Run 项
 - 📄 配置为纯 JSON：`%LOCALAPPDATA%\YogaKey\config.json`
 
@@ -74,7 +74,10 @@ src\YogaKey\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\YogaKey.exe
 | `win+l` | 徽标键组合 |
 | `alt+tab` / `win+shift+s` | 常用系统快捷键 |
 | `f13` … `f24` | 功能键 |
-| `run:notepad` | 启动程序（后接可执行文件名或完整路径） |
+| `run:notepad` | 启动程序（可执行文件名，或 `shell:` 别名） |
+| `run:"C:\Program Files\App\App.exe" --flag` | 带引号的完整路径 + 参数 |
+| `run:explorer.exe shell:Downloads` | 程序 + 参数 |
+| `url:https://example.com` | 用默认浏览器打开网址 |
 
 可用键名：字母 `a`–`z`、数字 `0`–`9`、`f1`–`f24`、`win` `ctrl` `alt` `shift`（可加 `l`/`r` 前缀）、`esc` `tab` `space` `enter` `backspace` `delete` `insert` `home` `end` `pageup` `pagedown` `left` `up` `right` `down` `printscreen` `capslock`、媒体键 `volumeup` `volumedown` `volumemute` `mediaplaypause` `medianext` `mediaprev`。
 

@@ -27,6 +27,7 @@ public sealed partial class MainWindow : Window
     private bool _initializing;
     private bool _ready;
     private int _statusToken;
+    private IntPtr _windowHandle;
 
     [DllImport("user32.dll")]
     private static extern uint GetDpiForWindow(IntPtr hwnd);
@@ -49,6 +50,7 @@ public sealed partial class MainWindow : Window
             presenter.PreferredMinimumHeight = 480;
         }
 
+        _windowHandle = WindowNative.GetWindowHandle(this);
         ResizeAndCenter(920, 820);
 
         _config = AppConfig.Load();
@@ -236,7 +238,7 @@ public sealed partial class MainWindow : Window
         EditKeyDialog? dialog = null;
         try
         {
-            dialog = new EditKeyDialog(code, action)
+            dialog = new EditKeyDialog(code, action, _windowHandle)
             {
                 XamlRoot = RootGrid.XamlRoot,
             };

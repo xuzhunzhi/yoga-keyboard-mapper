@@ -1,6 +1,11 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
+using Windows.Storage;
+using Windows.Storage.Pickers;
+
+using WinRT.Interop;
+
 using YogaKey.Core;
 
 namespace YogaKey;
@@ -8,17 +13,18 @@ namespace YogaKey;
 public sealed partial class EditKeyDialog : ContentDialog
 {
     private readonly DispatcherTimer _captureTimer = new() { Interval = TimeSpan.FromSeconds(8) };
+    private readonly IntPtr _windowHandle;
     private bool _syncingAction;
 
-    public EditKeyDialog(int? code, string? action)
+    public EditKeyDialog(int? code, string? action, IntPtr windowHandle)
     {
         InitializeComponent();
         _captureTimer.Tick += OnCaptureTimeout;
+        _windowHandle = windowHandle;
 
         Title = code is null ? "新增映射" : "编辑映射";
 
         PresetCombo.ItemsSource = ActionPresets.All;
-        PresetCombo.DisplayMemberPath = nameof(ActionPreset.Display);
 
         if (code is int value)
         {
@@ -51,6 +57,37 @@ public sealed partial class EditKeyDialog : ContentDialog
         CaptureButton.Content = "重新捕获";
         IsCapturing = false;
         ErrorBar.IsOpen = false;
+    }
+
+    private async void OnBrowseClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var picker = new FileOpenPicker
+            {
+                SuggestedStartLocation = PickerLocationId.ComputerFolder,
+            };
+            picker.FileTypeFilter.Add(".exe");
+            picker.FileTypeFilter.Add(".lnk");
+            picker.FileTypeFilter.Add(".bat");
+            picker.FileTypeFilter.Add(".cmd");
+
+            // WinUI 3 desktop pickers need an owner window or they throw.
+            InitializeWithWindow.Initialize(picker, _windowHandle);
+
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file is null)
+            {
+                return;
+            }
+
+            ActionBox.Text = $"run:\"{file.Path}\"";
+            ErrorBar.IsOpen = false;
+        }
+        catch (Exception ex)
+        {
+            ShowError("选择程序失败：" + ex.Message);
+        }
     }
 
     private void OnCaptureClick(object sender, RoutedEventArgs e)

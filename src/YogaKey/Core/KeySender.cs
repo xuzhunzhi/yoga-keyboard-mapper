@@ -68,11 +68,59 @@ public static class KeySender
 
         action = action.Trim();
 
+        if (action.StartsWith("url:", StringComparison.OrdinalIgnoreCase))
+        {
+            return StartShell(action[4..].Trim());
+        }
+
         if (action.StartsWith("run:", StringComparison.OrdinalIgnoreCase))
         {
+            // run:"C:\Program Files\App\App.exe" --flag   -> program + args
+            // run:notepad                                 -> program only
+            // run:explorer.exe shell:Downloads            -> program + args
+            string payload = action[4..].Trim();
+            if (payload.Length == 0)
+            {
+                return false;
+            }
+
+            string program;
+            string arguments = string.Empty;
+
+            if (payload[0] == '"')
+            {
+                int closing = payload.IndexOf('"', 1);
+                if (closing < 0)
+                {
+                    return false;
+                }
+
+                program = payload[1..closing];
+                arguments = payload[(closing + 1)..].Trim();
+            }
+            else
+            {
+                int space = payload.IndexOf(' ');
+                if (space > 0)
+                {
+                    program = payload[..space];
+                    arguments = payload[(space + 1)..].Trim();
+                }
+                else
+                {
+                    program = payload;
+                }
+            }
+
             try
             {
-                Process.Start(new ProcessStartInfo(action[4..].Trim()) { UseShellExecute = true });
+                var info = new ProcessStartInfo(program) { UseShellExecute = true };
+                if (arguments.Length > 0)
+                {
+                    info.Arguments = arguments;
+                }
+
+                Process.Start(info);
                 return true;
             }
             catch
@@ -133,6 +181,24 @@ public static class KeySender
         }
 
         SendInput((uint)inputs.Length, inputs, Marshal.SizeOf<INPUT>());
+    }
+
+    private static bool StartShell(string target)
+    {
+        if (string.IsNullOrWhiteSpace(target))
+        {
+            return false;
+        }
+
+        try
+        {
+            Process.Start(new ProcessStartInfo(target) { UseShellExecute = true });
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private static INPUT MakeInput(ushort vk, bool keyUp)
