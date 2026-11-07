@@ -36,6 +36,9 @@
 
 .PARAMETER StorePublisherDisplayName
     Package/Properties/PublisherDisplayName from Partner Center.
+
+.PARAMETER StoreDisplayName
+    App name reserved in Partner Center; the Store package's display name must match it.
 #>
 param(
     [string]$OutDir = (Join-Path $PSScriptRoot '..\artifacts\release'),
@@ -43,7 +46,8 @@ param(
     [switch]$NewCertificate,
     [string]$StoreIdentityName = '',
     [string]$StorePublisher = '',
-    [string]$StorePublisherDisplayName = ''
+    [string]$StorePublisherDisplayName = '',
+    [string]$StoreDisplayName = 'Keyboard Mapper for Yoga Book'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -168,17 +172,23 @@ foreach ($f in 'AppxBlockMap.xml', 'AppxSignature.p7x', '[Content_Types].xml') {
 Remove-Item -LiteralPath (Join-Path $layout 'AppxMetadata') -Recurse -Force -ErrorAction SilentlyContinue
 
 $layoutManifest = Join-Path $layout 'AppxManifest.xml'
-function Set-Identity([string]$name, [string]$pub, [string]$pubDisplay) {
+function Set-Identity([string]$name, [string]$pub, [string]$pubDisplay, [string]$display) {
     $xml = [xml](Get-Content $layoutManifest -Raw -Encoding UTF8)
     $xml.Package.Identity.SetAttribute('Version', "$version.0")
     if ($name) { $xml.Package.Identity.SetAttribute('Name', $name) }
     if ($pub) { $xml.Package.Identity.SetAttribute('Publisher', $pub) }
     if ($pubDisplay) { $xml.Package.Properties.PublisherDisplayName = $pubDisplay }
+    if ($display) {
+        $xml.Package.Properties.DisplayName = $display
+        $app = $xml.Package.Applications.Application
+        $app.VisualElements.SetAttribute('DisplayName', $display)
+        $app.Extensions.Extension.StartupTask.SetAttribute('DisplayName', $display)
+    }
     $xml.Save($layoutManifest)
 }
 
 Write-Host "`n== msix (self-signed)"
-Set-Identity '' '' ''
+Set-Identity '' '' '' ''
 $msix = Join-Path $OutDir "$base.msix"
 & $makeappx pack /d $layout /p $msix /h SHA256 /o | Out-Null
 Assert-Success 'makeappx pack'
@@ -194,7 +204,7 @@ Export-Certificate -Cert $cert -FilePath (Join-Path $OutDir 'YogaKeyboardMapper.
 if ($StoreIdentityName -or $StorePublisher) {
     if (-not ($StoreIdentityName -and $StorePublisher)) { throw 'Pass both -StoreIdentityName and -StorePublisher.' }
     Write-Host "`n== msix (Store, unsigned)"
-    Set-Identity $StoreIdentityName $StorePublisher $StorePublisherDisplayName
+    Set-Identity $StoreIdentityName $StorePublisher $StorePublisherDisplayName $StoreDisplayName
     & $makeappx pack /d $layout /p (Join-Path $OutDir "$base-store.msix") /h SHA256 /o | Out-Null
     Assert-Success 'makeappx pack (Store)'
 }
