@@ -119,8 +119,6 @@ powershell -ExecutionPolicy Bypass -File tools\package.ps1
 
 `%LOCALAPPDATA%\YogaKeyboardMapper\config.json`：
 
-> 旧版本叫 YogaKey，配置在 `%LOCALAPPDATA%\YogaKey\`。新版首次启动会自动把 `config.json` 复制过来，开机自启项也会自动换成新名字；确认无误后可以删掉旧文件夹。
-
 ```json
 {
   "DeviceMatch": "FE5A42B74943",
