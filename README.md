@@ -1,6 +1,8 @@
 # Yoga Keyboard Mapper
 
-把 **Lenovo Yoga Book 9 蓝牙键盘**上那些「特殊键」（Copilot / 联想 / 星形 / 性能控制台等）重新映射成你想要的快捷键。
+把 **Lenovo Yoga Book 9 蓝牙键盘**上那些「特殊键」（联想 / 星形 / 性能控制台等）重新映射成你想要的快捷键。
+
+> **Copilot 键不在支持范围内**：它发出的是标准组合键 `Win+Shift+F23`，不走厂商 HID 报告，本程序拦不到。想改它可以用 Windows 11 的「设置 → 个性化 → 文本输入 → 自定义键盘上的 Copilot 键」，或 PowerToys 键盘管理器。
 
 Windows 上通常没人能改这些键 —— 因为它们**根本不产生按键事件**。
 

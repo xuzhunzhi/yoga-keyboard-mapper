@@ -4,11 +4,12 @@ namespace YogaKeyboardMapper.Core;
 
 /// <summary>
 /// Listens for the vendor-defined HID reports that the Lenovo Yoga Book 9
-/// Bluetooth keyboard emits for its "special" keys (Copilot / Lenovo / star ...).
+/// Bluetooth keyboard emits for its "special" keys (Lenovo / star ...).
 ///
 /// Those keys never produce a normal Windows key event, so they cannot be
 /// remapped with PowerToys, scancode maps or the registry. We therefore read
 /// the raw HID input report and hand the vendor key code to the caller.
+/// (The Copilot key is not one of them: it sends a regular Win+Shift+F23.)
 /// </summary>
 public sealed class RawKeyListener : IDisposable
 {
