@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- App -->
+  <data name="App_AlreadyRunning" xml:space="preserve">
+    <value>Yoga Keyboard Mapper is already running (check the taskbar).</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="VersionFormat" xml:space="preserve">
+    <value>Yoga Keyboard Mapper {0} · MIT</value>
+  </data>
+
+  <!-- MainWindow.xaml -->
+  <data name="PageTitle.Text" xml:space="preserve">
+    <value>Special key mapping</value>
+  </data>
+  <data name="PageSubtitle.Text" xml:space="preserve">
+    <value>Press a special key on your Yoga Book Bluetooth keyboard and turn it into any shortcut you want.</value>
+  </data>
+  <data name="MappingsHeader.Text" xml:space="preserve">
+    <value>Key mappings</value>
+  </data>
+  <data name="AddButton.Label" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="EditButton.Label" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="DeleteButton.Label" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="MappingsList.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Key mapping list</value>
+  </data>
+  <data name="RowEditItem.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="RowDeleteItem.Text" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="EmptyText.Text" xml:space="preserve">
+    <value>No mappings yet</value>
+  </data>
+  <data name="EmptyAddButton.Content" xml:space="preserve">
+    <value>Add mapping</value>
+  </data>
+  <data name="GeneralHeader.Text" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="ListenCard.Header" xml:space="preserve">
+    <value>Listen for special keys</value>
+  </data>
+  <data name="ListenCard.Description" xml:space="preserve">
+    <value>When off, the keyboard is no longer intercepted</value>
+  </data>
+  <data name="ListenToggle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Listen for special keys</value>
+  </data>
+  <data name="ListenToggle.OnContent" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="ListenToggle.OffContent" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="AutoStartCard.Header" xml:space="preserve">
+    <value>Start with Windows</value>
+  </data>
+  <data name="AutoStartCard.Description" xml:space="preserve">
+    <value>Run automatically after you sign in to Windows</value>
+  </data>
+  <data name="AutoStartToggle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Start with Windows</value>
+  </data>
+  <data name="AutoStartToggle.OnContent" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="AutoStartToggle.OffContent" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="ConfigCard.Header" xml:space="preserve">
+    <value>Configuration file</value>
+  </data>
+  <data name="OpenFolderButton.Content" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="AdvancedExpander.Header" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="AdvancedExpander.Description" xml:space="preserve">
+    <value>Device matching: only needs changing after you switch keyboards or pair again</value>
+  </data>
+  <data name="DeviceMatchCard.Header" xml:space="preserve">
+    <value>Device match (DeviceMatch)</value>
+  </data>
+  <data name="DeviceMatchCard.Description" xml:space="preserve">
+    <value>Part of the device path, such as the keyboard's Bluetooth ID</value>
+  </data>
+  <data name="DeviceMatchBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Device match (DeviceMatch)</value>
+  </data>
+  <data name="CollectionCard.Header" xml:space="preserve">
+    <value>Collection (CollectionMatch)</value>
+  </data>
+  <data name="CollectionCard.Description" xml:space="preserve">
+    <value>The HID collection that carries the special keys</value>
+  </data>
+  <data name="CollectionBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Collection (CollectionMatch)</value>
+  </data>
+  <data name="ApplyCard.Header" xml:space="preserve">
+    <value>Apply settings</value>
+  </data>
+  <data name="ApplyCard.Description" xml:space="preserve">
+    <value>Save the matching above and restart listening</value>
+  </data>
+  <data name="ApplyButton.Content" xml:space="preserve">
+    <value>Apply and restart listening</value>
+  </data>
+
+  <!-- MainWindow.xaml.cs -->
+  <data name="Status_ConfigLoadFailedFormat" xml:space="preserve">
+    <value>Couldn't read the configuration file, so the default settings are in use: {0}</value>
+  </data>
+  <data name="Status_ListenFailed" xml:space="preserve">
+    <value>Couldn't start listening. Check that the Yoga Book keyboard is connected, or review the device matching under Advanced.</value>
+  </data>
+  <data name="Status_ListenPaused" xml:space="preserve">
+    <value>Listening paused.</value>
+  </data>
+  <data name="Status_ActionFailedFormat" xml:space="preserve">
+    <value>Couldn't run the action: {0}</value>
+  </data>
+  <data name="Status_EditorFailed" xml:space="preserve">
+    <value>Couldn't open the editor. Please try again.</value>
+  </data>
+  <data name="Status_SavedFormat" xml:space="preserve">
+    <value>Saved {0} → {1}</value>
+  </data>
+  <data name="Status_DeletedFormat" xml:space="preserve">
+    <value>Deleted {0}</value>
+  </data>
+  <data name="Status_SaveFailedFormat" xml:space="preserve">
+    <value>Couldn't save the configuration: {0}</value>
+  </data>
+  <data name="Status_AutoStartOn" xml:space="preserve">
+    <value>Yoga Keyboard Mapper will start with Windows.</value>
+  </data>
+  <data name="Status_AutoStartOff" xml:space="preserve">
+    <value>Yoga Keyboard Mapper will no longer start with Windows.</value>
+  </data>
+  <data name="Status_AutoStartBlocked" xml:space="preserve">
+    <value>Starting with Windows was turned off in Windows Settings, and the app can't turn it back on. Turn Yoga Keyboard Mapper on in Settings &gt; Apps &gt; Startup.</value>
+  </data>
+  <data name="Status_DeviceMatchEmpty" xml:space="preserve">
+    <value>Device match and collection can't both be empty, or every keyboard would be intercepted.</value>
+  </data>
+  <data name="Status_DeviceApplied" xml:space="preserve">
+    <value>Device matching applied.</value>
+  </data>
+  <data name="Status_DeviceSavedNotListening" xml:space="preserve">
+    <value>Device matching saved, but listening didn't start.</value>
+  </data>
+  <data name="DeleteDialog_Title" xml:space="preserve">
+    <value>Delete mapping?</value>
+  </data>
+  <data name="DeleteDialog_ContentFormat" xml:space="preserve">
+    <value>{0} → {1}</value>
+  </data>
+  <data name="DeleteDialog_Primary" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+
+  <!-- EditKeyDialog -->
+  <data name="EditKeyDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="EditKeyDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="EditDialog_AddTitle" xml:space="preserve">
+    <value>Add mapping</value>
+  </data>
+  <data name="EditDialog_EditTitle" xml:space="preserve">
+    <value>Edit mapping</value>
+  </data>
+  <data name="KeyHeader.Text" xml:space="preserve">
+    <value>Key</value>
+  </data>
+  <data name="PresetHeader.Text" xml:space="preserve">
+    <value>Common actions</value>
+  </data>
+  <data name="ActionBox.Header" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="ActionBox.PlaceholderText" xml:space="preserve">
+    <value>e.g. ctrl+shift+esc, run:notepad, url:https://…</value>
+  </data>
+  <data name="BrowseButton.Content" xml:space="preserve">
+    <value>Choose app…</value>
+  </data>
+  <data name="ActionExampleShortcut.Text" xml:space="preserve">
+    <value>Key combination</value>
+  </data>
+  <data name="ActionExampleRun.Text" xml:space="preserve">
+    <value>Start a program</value>
+  </data>
+  <data name="ActionExampleUrl.Text" xml:space="preserve">
+    <value>Open a web page</value>
+  </data>
+  <data name="Capture_Start" xml:space="preserve">
+    <value>Start capture</value>
+  </data>
+  <data name="Capture_Retry" xml:space="preserve">
+    <value>Capture again</value>
+  </data>
+  <data name="Capture_Cancel" xml:space="preserve">
+    <value>Cancel capture</value>
+  </data>
+  <data name="Capture_Waiting" xml:space="preserve">
+    <value>Waiting for a key (8 s)</value>
+  </data>
+  <data name="Capture_NotCaptured" xml:space="preserve">
+    <value>Not captured yet</value>
+  </data>
+  <data name="Error_BrowseFailedFormat" xml:space="preserve">
+    <value>Couldn't choose the app: {0}</value>
+  </data>
+  <data name="Error_NoKeyReceived" xml:space="preserve">
+    <value>No key press received. Make sure the Yoga Book keyboard is connected, then try again.</value>
+  </data>
+  <data name="Error_CaptureFirst" xml:space="preserve">
+    <value>Select Start capture first, then press a special key on the keyboard.</value>
+  </data>
+  <data name="Error_NoAction" xml:space="preserve">
+    <value>Choose or enter an action.</value>
+  </data>
+  <data name="CategoryBox.PlaceholderText" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="CategoryBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Common action category</value>
+  </data>
+  <data name="PresetBox.PlaceholderText" xml:space="preserve">
+    <value>Choose a preset action</value>
+  </data>
+  <data name="PresetBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Common actions</value>
+  </data>
+
+  <!-- Core -->
+  <data name="Config_Empty" xml:space="preserve">
+    <value>config.json is empty</value>
+  </data>
+  <data name="Config_BackedUpFormat" xml:space="preserve">
+    <value>{0} (the original file was backed up as {1})</value>
+  </data>
+  <data name="Config_BackupFailedFormat" xml:space="preserve">
+    <value>{0} (couldn't back up the original file: {1})</value>
+  </data>
+  <data name="KeyLabelFormat" xml:space="preserve">
+    <value>Special key {0}</value>
+  </data>
+  <data name="MappingAccessibleFormat" xml:space="preserve">
+    <value>{0}, action {1}</value>
+  </data>
+  <data name="Describe_NotSet" xml:space="preserve">
+    <value>(Not set)</value>
+  </data>
+  <data name="Describe_PresetFormat" xml:space="preserve">
+    <value>{0}  ·  {1}</value>
+  </data>
+  <data name="Describe_RunFormat" xml:space="preserve">
+    <value>Run  ·  {0}</value>
+  </data>
+  <data name="Describe_UrlFormat" xml:space="preserve">
+    <value>Open URL  ·  {0}</value>
+  </data>
+
+  <!-- Preset categories -->
+  <data name="PresetCategory_System" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="PresetCategory_Window" xml:space="preserve">
+    <value>Window</value>
+  </data>
+  <data name="PresetCategory_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="PresetCategory_Apps" xml:space="preserve">
+    <value>Apps</value>
+  </data>
+  <data name="PresetCategory_Files" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="PresetCategory_Media" xml:space="preserve">
+    <value>Media</value>
+  </data>
+
+  <!-- Presets: System -->
+  <data name="Preset_TaskManager" xml:space="preserve">
+    <value>Task Manager</value>
+  </data>
+  <data name="Preset_Lock" xml:space="preserve">
+    <value>Lock screen</value>
+  </data>
+  <data name="Preset_Screenshot" xml:space="preserve">
+    <value>Screenshot</value>
+  </data>
+  <data name="Preset_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Preset_FileExplorer" xml:space="preserve">
+    <value>File Explorer</value>
+  </data>
+  <data name="Preset_ShowDesktop" xml:space="preserve">
+    <value>Show desktop</value>
+  </data>
+  <data name="Preset_TaskView" xml:space="preserve">
+    <value>Task view</value>
+  </data>
+  <data name="Preset_RunDialog" xml:space="preserve">
+    <value>Run dialog</value>
+  </data>
+  <data name="Preset_ClipboardHistory" xml:space="preserve">
+    <value>Clipboard history</value>
+  </data>
+  <data name="Preset_SystemInformation" xml:space="preserve">
+    <value>System Information</value>
+  </data>
+  <data name="Preset_ControlPanel" xml:space="preserve">
+    <value>Control Panel</value>
+  </data>
+  <data name="Preset_DeviceManager" xml:space="preserve">
+    <value>Device Manager</value>
+  </data>
+  <data name="Preset_Services" xml:space="preserve">
+    <value>Services</value>
+  </data>
+  <data name="Preset_DiskManagement" xml:space="preserve">
+    <value>Disk Management</value>
+  </data>
+  <data name="Preset_RegistryEditor" xml:space="preserve">
+    <value>Registry Editor</value>
+  </data>
+
+  <!-- Presets: Window -->
+  <data name="Preset_SwitchWindows" xml:space="preserve">
+    <value>Switch windows</value>
+  </data>
+  <data name="Preset_SwitchWindowsReverse" xml:space="preserve">
+    <value>Switch windows (reverse)</value>
+  </data>
+  <data name="Preset_CloseWindow" xml:space="preserve">
+    <value>Close current window</value>
+  </data>
+  <data name="Preset_Maximize" xml:space="preserve">
+    <value>Maximize</value>
+  </data>
+  <data name="Preset_Minimize" xml:space="preserve">
+    <value>Minimize</value>
+  </data>
+  <data name="Preset_SnapLeft" xml:space="preserve">
+    <value>Snap to left half</value>
+  </data>
+  <data name="Preset_SnapRight" xml:space="preserve">
+    <value>Snap to right half</value>
+  </data>
+
+  <!-- Presets: Edit -->
+  <data name="Preset_Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="Preset_Paste" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="Preset_Cut" xml:space="preserve">
+    <value>Cut</value>
+  </data>
+  <data name="Preset_Undo" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="Preset_Redo" xml:space="preserve">
+    <value>Redo</value>
+  </data>
+  <data name="Preset_SelectAll" xml:space="preserve">
+    <value>Select all</value>
+  </data>
+  <data name="Preset_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Preset_Find" xml:space="preserve">
+    <value>Find</value>
+  </data>
+  <data name="Preset_New" xml:space="preserve">
+    <value>New</value>
+  </data>
+
+  <!-- Presets: Apps -->
+  <data name="Preset_Calculator" xml:space="preserve">
+    <value>Calculator</value>
+  </data>
+  <data name="Preset_Notepad" xml:space="preserve">
+    <value>Notepad</value>
+  </data>
+  <data name="Preset_Paint" xml:space="preserve">
+    <value>Paint</value>
+  </data>
+  <data name="Preset_CommandPrompt" xml:space="preserve">
+    <value>Command Prompt</value>
+  </data>
+  <data name="Preset_PowerShell" xml:space="preserve">
+    <value>PowerShell</value>
+  </data>
+  <data name="Preset_Terminal" xml:space="preserve">
+    <value>Terminal</value>
+  </data>
+  <data name="Preset_WordPad" xml:space="preserve">
+    <value>WordPad</value>
+  </data>
+  <data name="Preset_Magnifier" xml:space="preserve">
+    <value>Magnifier</value>
+  </data>
+
+  <!-- Presets: Files -->
+  <data name="Preset_DownloadsFolder" xml:space="preserve">
+    <value>Downloads folder</value>
+  </data>
+  <data name="Preset_DesktopFolder" xml:space="preserve">
+    <value>Desktop folder</value>
+  </data>
+  <data name="Preset_DocumentsFolder" xml:space="preserve">
+    <value>Documents folder</value>
+  </data>
+  <data name="Preset_RecycleBin" xml:space="preserve">
+    <value>Recycle Bin</value>
+  </data>
+
+  <!-- Presets: Media -->
+  <data name="Preset_PlayPause" xml:space="preserve">
+    <value>Play / pause</value>
+  </data>
+  <data name="Preset_NextTrack" xml:space="preserve">
+    <value>Next track</value>
+  </data>
+  <data name="Preset_PreviousTrack" xml:space="preserve">
+    <value>Previous track</value>
+  </data>
+  <data name="Preset_VolumeUp" xml:space="preserve">
+    <value>Volume up</value>
+  </data>
+  <data name="Preset_VolumeDown" xml:space="preserve">
+    <value>Volume down</value>
+  </data>
+  <data name="Preset_Mute" xml:space="preserve">
+    <value>Mute</value>
+  </data>
+</root>

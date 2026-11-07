@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- App -->
+  <data name="App_AlreadyRunning" xml:space="preserve">
+    <value>Yoga Keyboard Mapper 已经在运行了（看任务栏）。</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="VersionFormat" xml:space="preserve">
+    <value>Yoga Keyboard Mapper {0} · MIT</value>
+  </data>
+
+  <!-- MainWindow.xaml -->
+  <data name="PageTitle.Text" xml:space="preserve">
+    <value>特殊键映射</value>
+  </data>
+  <data name="PageSubtitle.Text" xml:space="preserve">
+    <value>按一下 Yoga Book 蓝牙键盘上的特殊键，把它换成你想要的快捷键。</value>
+  </data>
+  <data name="MappingsHeader.Text" xml:space="preserve">
+    <value>按键映射</value>
+  </data>
+  <data name="AddButton.Label" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="EditButton.Label" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="DeleteButton.Label" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="MappingsList.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>按键映射列表</value>
+  </data>
+  <data name="RowEditItem.Text" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="RowDeleteItem.Text" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="EmptyText.Text" xml:space="preserve">
+    <value>还没有任何映射</value>
+  </data>
+  <data name="EmptyAddButton.Content" xml:space="preserve">
+    <value>新增映射</value>
+  </data>
+  <data name="GeneralHeader.Text" xml:space="preserve">
+    <value>常规</value>
+  </data>
+  <data name="ListenCard.Header" xml:space="preserve">
+    <value>监听特殊键</value>
+  </data>
+  <data name="ListenCard.Description" xml:space="preserve">
+    <value>关闭后不再拦截键盘</value>
+  </data>
+  <data name="ListenToggle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>监听特殊键</value>
+  </data>
+  <data name="ListenToggle.OnContent" xml:space="preserve">
+    <value>开</value>
+  </data>
+  <data name="ListenToggle.OffContent" xml:space="preserve">
+    <value>关</value>
+  </data>
+  <data name="AutoStartCard.Header" xml:space="preserve">
+    <value>开机自启</value>
+  </data>
+  <data name="AutoStartCard.Description" xml:space="preserve">
+    <value>登录 Windows 后自动运行</value>
+  </data>
+  <data name="AutoStartToggle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>开机自启</value>
+  </data>
+  <data name="AutoStartToggle.OnContent" xml:space="preserve">
+    <value>开</value>
+  </data>
+  <data name="AutoStartToggle.OffContent" xml:space="preserve">
+    <value>关</value>
+  </data>
+  <data name="ConfigCard.Header" xml:space="preserve">
+    <value>配置文件</value>
+  </data>
+  <data name="OpenFolderButton.Content" xml:space="preserve">
+    <value>打开文件夹</value>
+  </data>
+  <data name="AdvancedExpander.Header" xml:space="preserve">
+    <value>高级</value>
+  </data>
+  <data name="AdvancedExpander.Description" xml:space="preserve">
+    <value>设备匹配：换键盘或重新配对后才需要修改</value>
+  </data>
+  <data name="DeviceMatchCard.Header" xml:space="preserve">
+    <value>设备匹配 DeviceMatch</value>
+  </data>
+  <data name="DeviceMatchCard.Description" xml:space="preserve">
+    <value>设备路径中包含的片段，如键盘的蓝牙 ID</value>
+  </data>
+  <data name="DeviceMatchBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>设备匹配 DeviceMatch</value>
+  </data>
+  <data name="CollectionCard.Header" xml:space="preserve">
+    <value>集合 CollectionMatch</value>
+  </data>
+  <data name="CollectionCard.Description" xml:space="preserve">
+    <value>特殊键所在的 HID 集合</value>
+  </data>
+  <data name="CollectionBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>集合 CollectionMatch</value>
+  </data>
+  <data name="ApplyCard.Header" xml:space="preserve">
+    <value>应用设置</value>
+  </data>
+  <data name="ApplyCard.Description" xml:space="preserve">
+    <value>保存上面的匹配并重新开始监听</value>
+  </data>
+  <data name="ApplyButton.Content" xml:space="preserve">
+    <value>应用并重启监听</value>
+  </data>
+
+  <!-- MainWindow.xaml.cs -->
+  <data name="Status_ConfigLoadFailedFormat" xml:space="preserve">
+    <value>配置文件读取失败，已使用默认设置：{0}</value>
+  </data>
+  <data name="Status_ListenFailed" xml:space="preserve">
+    <value>监听启动失败：检查 Yoga Book 键盘是否已连接，或到「高级」核对设备匹配。</value>
+  </data>
+  <data name="Status_ListenPaused" xml:space="preserve">
+    <value>已暂停监听。</value>
+  </data>
+  <data name="Status_ActionFailedFormat" xml:space="preserve">
+    <value>动作执行失败：{0}</value>
+  </data>
+  <data name="Status_EditorFailed" xml:space="preserve">
+    <value>编辑窗口打开失败，请重试。</value>
+  </data>
+  <data name="Status_SavedFormat" xml:space="preserve">
+    <value>已保存 {0} → {1}</value>
+  </data>
+  <data name="Status_DeletedFormat" xml:space="preserve">
+    <value>已删除 {0}</value>
+  </data>
+  <data name="Status_SaveFailedFormat" xml:space="preserve">
+    <value>保存配置失败：{0}</value>
+  </data>
+  <data name="Status_AutoStartOn" xml:space="preserve">
+    <value>已设置开机自启。</value>
+  </data>
+  <data name="Status_AutoStartOff" xml:space="preserve">
+    <value>已取消开机自启。</value>
+  </data>
+  <data name="Status_AutoStartBlocked" xml:space="preserve">
+    <value>开机自启已在 Windows 设置里被关闭，程序无法自行打开。请到「设置 → 应用 → 启动」里重新打开 Yoga Keyboard Mapper。</value>
+  </data>
+  <data name="Status_DeviceMatchEmpty" xml:space="preserve">
+    <value>设备匹配不能全部留空，否则会拦截所有键盘。</value>
+  </data>
+  <data name="Status_DeviceApplied" xml:space="preserve">
+    <value>设备匹配已应用。</value>
+  </data>
+  <data name="Status_DeviceSavedNotListening" xml:space="preserve">
+    <value>设备匹配已保存，但监听没有启动成功。</value>
+  </data>
+  <data name="DeleteDialog_Title" xml:space="preserve">
+    <value>删除映射？</value>
+  </data>
+  <data name="DeleteDialog_ContentFormat" xml:space="preserve">
+    <value>{0} → {1}</value>
+  </data>
+  <data name="DeleteDialog_Primary" xml:space="preserve">
+    <value>删除</value>
+  </data>
+
+  <!-- EditKeyDialog -->
+  <data name="EditKeyDialog.PrimaryButtonText" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="EditKeyDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="EditDialog_AddTitle" xml:space="preserve">
+    <value>新增映射</value>
+  </data>
+  <data name="EditDialog_EditTitle" xml:space="preserve">
+    <value>编辑映射</value>
+  </data>
+  <data name="KeyHeader.Text" xml:space="preserve">
+    <value>按键</value>
+  </data>
+  <data name="PresetHeader.Text" xml:space="preserve">
+    <value>常用动作</value>
+  </data>
+  <data name="ActionBox.Header" xml:space="preserve">
+    <value>动作</value>
+  </data>
+  <data name="ActionBox.PlaceholderText" xml:space="preserve">
+    <value>如 ctrl+shift+esc、run:notepad、url:https://…</value>
+  </data>
+  <data name="BrowseButton.Content" xml:space="preserve">
+    <value>选择程序…</value>
+  </data>
+  <data name="ActionExampleShortcut.Text" xml:space="preserve">
+    <value>组合键</value>
+  </data>
+  <data name="ActionExampleRun.Text" xml:space="preserve">
+    <value>启动程序</value>
+  </data>
+  <data name="ActionExampleUrl.Text" xml:space="preserve">
+    <value>打开网页</value>
+  </data>
+  <data name="Capture_Start" xml:space="preserve">
+    <value>开始捕获</value>
+  </data>
+  <data name="Capture_Retry" xml:space="preserve">
+    <value>重新捕获</value>
+  </data>
+  <data name="Capture_Cancel" xml:space="preserve">
+    <value>取消捕获</value>
+  </data>
+  <data name="Capture_Waiting" xml:space="preserve">
+    <value>等待按键（8 秒）</value>
+  </data>
+  <data name="Capture_NotCaptured" xml:space="preserve">
+    <value>尚未捕获</value>
+  </data>
+  <data name="Error_BrowseFailedFormat" xml:space="preserve">
+    <value>选择程序失败：{0}</value>
+  </data>
+  <data name="Error_NoKeyReceived" xml:space="preserve">
+    <value>没有收到按键。请确认 Yoga Book 键盘已连接后重试。</value>
+  </data>
+  <data name="Error_CaptureFirst" xml:space="preserve">
+    <value>请先点「开始捕获」，再按一下键盘上的特殊键。</value>
+  </data>
+  <data name="Error_NoAction" xml:space="preserve">
+    <value>请选择或填写一个动作。</value>
+  </data>
+  <data name="CategoryBox.PlaceholderText" xml:space="preserve">
+    <value>类别</value>
+  </data>
+  <data name="CategoryBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>常用动作类别</value>
+  </data>
+  <data name="PresetBox.PlaceholderText" xml:space="preserve">
+    <value>选择预置动作</value>
+  </data>
+  <data name="PresetBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>常用动作</value>
+  </data>
+
+  <!-- Core -->
+  <data name="Config_Empty" xml:space="preserve">
+    <value>config.json 为空</value>
+  </data>
+  <data name="Config_BackedUpFormat" xml:space="preserve">
+    <value>{0}（原文件已备份为 {1}）</value>
+  </data>
+  <data name="Config_BackupFailedFormat" xml:space="preserve">
+    <value>{0}（备份原文件失败：{1}）</value>
+  </data>
+  <data name="KeyLabelFormat" xml:space="preserve">
+    <value>特殊键 {0}</value>
+  </data>
+  <data name="MappingAccessibleFormat" xml:space="preserve">
+    <value>{0}，动作 {1}</value>
+  </data>
+  <data name="Describe_NotSet" xml:space="preserve">
+    <value>（未设置）</value>
+  </data>
+  <data name="Describe_PresetFormat" xml:space="preserve">
+    <value>{0}  ·  {1}</value>
+  </data>
+  <data name="Describe_RunFormat" xml:space="preserve">
+    <value>启动  ·  {0}</value>
+  </data>
+  <data name="Describe_UrlFormat" xml:space="preserve">
+    <value>打开网址  ·  {0}</value>
+  </data>
+
+  <!-- Preset categories -->
+  <data name="PresetCategory_System" xml:space="preserve">
+    <value>系统</value>
+  </data>
+  <data name="PresetCategory_Window" xml:space="preserve">
+    <value>窗口</value>
+  </data>
+  <data name="PresetCategory_Edit" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="PresetCategory_Apps" xml:space="preserve">
+    <value>应用</value>
+  </data>
+  <data name="PresetCategory_Files" xml:space="preserve">
+    <value>文件</value>
+  </data>
+  <data name="PresetCategory_Media" xml:space="preserve">
+    <value>媒体</value>
+  </data>
+
+  <!-- Presets: System -->
+  <data name="Preset_TaskManager" xml:space="preserve">
+    <value>任务管理器</value>
+  </data>
+  <data name="Preset_Lock" xml:space="preserve">
+    <value>锁屏</value>
+  </data>
+  <data name="Preset_Screenshot" xml:space="preserve">
+    <value>截图</value>
+  </data>
+  <data name="Preset_Settings" xml:space="preserve">
+    <value>系统设置</value>
+  </data>
+  <data name="Preset_FileExplorer" xml:space="preserve">
+    <value>资源管理器</value>
+  </data>
+  <data name="Preset_ShowDesktop" xml:space="preserve">
+    <value>显示桌面</value>
+  </data>
+  <data name="Preset_TaskView" xml:space="preserve">
+    <value>任务视图</value>
+  </data>
+  <data name="Preset_RunDialog" xml:space="preserve">
+    <value>运行对话框</value>
+  </data>
+  <data name="Preset_ClipboardHistory" xml:space="preserve">
+    <value>剪贴板历史</value>
+  </data>
+  <data name="Preset_SystemInformation" xml:space="preserve">
+    <value>系统信息</value>
+  </data>
+  <data name="Preset_ControlPanel" xml:space="preserve">
+    <value>控制面板</value>
+  </data>
+  <data name="Preset_DeviceManager" xml:space="preserve">
+    <value>设备管理器</value>
+  </data>
+  <data name="Preset_Services" xml:space="preserve">
+    <value>服务</value>
+  </data>
+  <data name="Preset_DiskManagement" xml:space="preserve">
+    <value>磁盘管理</value>
+  </data>
+  <data name="Preset_RegistryEditor" xml:space="preserve">
+    <value>注册表编辑器</value>
+  </data>
+
+  <!-- Presets: Window -->
+  <data name="Preset_SwitchWindows" xml:space="preserve">
+    <value>切换窗口</value>
+  </data>
+  <data name="Preset_SwitchWindowsReverse" xml:space="preserve">
+    <value>切换窗口（反向）</value>
+  </data>
+  <data name="Preset_CloseWindow" xml:space="preserve">
+    <value>关闭当前窗口</value>
+  </data>
+  <data name="Preset_Maximize" xml:space="preserve">
+    <value>最大化</value>
+  </data>
+  <data name="Preset_Minimize" xml:space="preserve">
+    <value>最小化</value>
+  </data>
+  <data name="Preset_SnapLeft" xml:space="preserve">
+    <value>贴到左半屏</value>
+  </data>
+  <data name="Preset_SnapRight" xml:space="preserve">
+    <value>贴到右半屏</value>
+  </data>
+
+  <!-- Presets: Edit -->
+  <data name="Preset_Copy" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="Preset_Paste" xml:space="preserve">
+    <value>粘贴</value>
+  </data>
+  <data name="Preset_Cut" xml:space="preserve">
+    <value>剪切</value>
+  </data>
+  <data name="Preset_Undo" xml:space="preserve">
+    <value>撤销</value>
+  </data>
+  <data name="Preset_Redo" xml:space="preserve">
+    <value>重做</value>
+  </data>
+  <data name="Preset_SelectAll" xml:space="preserve">
+    <value>全选</value>
+  </data>
+  <data name="Preset_Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Preset_Find" xml:space="preserve">
+    <value>查找</value>
+  </data>
+  <data name="Preset_New" xml:space="preserve">
+    <value>新建</value>
+  </data>
+
+  <!-- Presets: Apps -->
+  <data name="Preset_Calculator" xml:space="preserve">
+    <value>计算器</value>
+  </data>
+  <data name="Preset_Notepad" xml:space="preserve">
+    <value>记事本</value>
+  </data>
+  <data name="Preset_Paint" xml:space="preserve">
+    <value>画图</value>
+  </data>
+  <data name="Preset_CommandPrompt" xml:space="preserve">
+    <value>命令提示符</value>
+  </data>
+  <data name="Preset_PowerShell" xml:space="preserve">
+    <value>PowerShell</value>
+  </data>
+  <data name="Preset_Terminal" xml:space="preserve">
+    <value>终端</value>
+  </data>
+  <data name="Preset_WordPad" xml:space="preserve">
+    <value>写字板</value>
+  </data>
+  <data name="Preset_Magnifier" xml:space="preserve">
+    <value>放大镜</value>
+  </data>
+
+  <!-- Presets: Files -->
+  <data name="Preset_DownloadsFolder" xml:space="preserve">
+    <value>下载文件夹</value>
+  </data>
+  <data name="Preset_DesktopFolder" xml:space="preserve">
+    <value>桌面文件夹</value>
+  </data>
+  <data name="Preset_DocumentsFolder" xml:space="preserve">
+    <value>文档文件夹</value>
+  </data>
+  <data name="Preset_RecycleBin" xml:space="preserve">
+    <value>回收站</value>
+  </data>
+
+  <!-- Presets: Media -->
+  <data name="Preset_PlayPause" xml:space="preserve">
+    <value>播放 / 暂停</value>
+  </data>
+  <data name="Preset_NextTrack" xml:space="preserve">
+    <value>下一首</value>
+  </data>
+  <data name="Preset_PreviousTrack" xml:space="preserve">
+    <value>上一首</value>
+  </data>
+  <data name="Preset_VolumeUp" xml:space="preserve">
+    <value>音量 +</value>
+  </data>
+  <data name="Preset_VolumeDown" xml:space="preserve">
+    <value>音量 -</value>
+  </data>
+  <data name="Preset_Mute" xml:space="preserve">
+    <value>静音</value>
+  </data>
+</root>

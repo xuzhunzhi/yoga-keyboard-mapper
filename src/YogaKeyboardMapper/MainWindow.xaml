@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="YogaKeyboardMapper.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:core="using:YogaKeyboardMapper.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <Grid x:Name="RootGrid" SizeChanged="OnRootGridSizeChanged">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Custom title bar -->
+        <Grid x:Name="AppTitleBar" Grid.Row="0" Height="48" Padding="16,0">
+            <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <Image x:Name="TitleBarIcon"
+                       Width="16"
+                       Height="16"
+                       IsHitTestVisible="False"
+                       AutomationProperties.AccessibilityView="Raw" />
+                <TextBlock x:Name="TitleBarText"
+                           Text="Yoga Keyboard Mapper"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Status bar: kept outside the scroll area so feedback never scrolls away -->
+        <InfoBar x:Name="StatusBar"
+                 Grid.Row="1"
+                 IsOpen="False"
+                 IsClosable="True"
+                 AutomationProperties.LiveSetting="Polite"
+                 Margin="0,0,0,8"
+                 HorizontalAlignment="Center" />
+
+        <ScrollViewer Grid.Row="2"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <!-- The width is assigned from code (see OnRootGridSizeChanged) instead of
+                 MaxWidth + Stretch: that combination is what clipped the page whenever
+                 the window size or the DPI changed. -->
+            <StackPanel x:Name="PagePanel"
+                        Padding="32,8,32,28"
+                        Spacing="24"
+                        HorizontalAlignment="Center">
+
+                <!-- Page header -->
+                <StackPanel Spacing="4">
+                    <TextBlock x:Uid="PageTitle" Style="{StaticResource TitleTextBlockStyle}" />
+                    <TextBlock x:Uid="PageSubtitle"
+                               Style="{StaticResource BodyTextBlockStyle}"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+
+                <!-- Mapping section -->
+                <StackPanel Spacing="8">
+                    <Grid>
+                        <TextBlock x:Uid="MappingsHeader"
+                                   Style="{StaticResource BodyStrongTextBlockStyle}"
+                                   VerticalAlignment="Center" />
+
+                        <CommandBar HorizontalAlignment="Right"
+                                    DefaultLabelPosition="Right"
+                                    IsOpen="False"
+                                    Background="Transparent"
+                                    Padding="0"
+                                    OverflowButtonVisibility="Collapsed"
+                                    VerticalAlignment="Center">
+                            <!-- The template reserves this column for the "..." button even when it is collapsed. -->
+                            <CommandBar.Resources>
+                                <x:Double x:Key="AppBarMoreButtonColumnMinWidth">0</x:Double>
+                            </CommandBar.Resources>
+                            <AppBarButton x:Name="AddButton"
+                                          x:Uid="AddButton"
+                                          Icon="Add"
+                                          KeyboardAcceleratorTextOverride="Ctrl+N"
+                                          Click="OnAddClick">
+                                <AppBarButton.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="N" Modifiers="Control" />
+                                </AppBarButton.KeyboardAccelerators>
+                            </AppBarButton>
+                            <AppBarButton x:Name="EditButton"
+                                          x:Uid="EditButton"
+                                          Icon="Edit"
+                                          KeyboardAcceleratorTextOverride="F2"
+                                          Click="OnEditClick"
+                                          IsEnabled="False">
+                                <AppBarButton.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="F2" />
+                                </AppBarButton.KeyboardAccelerators>
+                            </AppBarButton>
+                            <AppBarButton x:Name="DeleteButton"
+                                          x:Uid="DeleteButton"
+                                          Icon="Delete"
+                                          KeyboardAcceleratorTextOverride="Delete"
+                                          Click="OnDeleteClick"
+                                          IsEnabled="False" />
+                        </CommandBar>
+                    </Grid>
+
+                    <Grid>
+                        <Border x:Name="ListCard"
+                                VerticalAlignment="Top"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8">
+                            <ListView x:Name="MappingsList"
+                                      x:Uid="MappingsList"
+                                      SelectionMode="Single"
+                                      KeyDown="OnListKeyDown"
+                                      SelectionChanged="OnSelectionChanged"
+                                      Background="Transparent"
+                                      MinHeight="72"
+                                      MaxHeight="320"
+                                      Padding="4">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="core:MappingItem">
+                                        <Grid ColumnSpacing="12"
+                                              Padding="4,8"
+                                              AutomationProperties.Name="{x:Bind AccessibleText}"
+                                              ToolTipService.ToolTip="{x:Bind ActionText}"
+                                              DoubleTapped="OnRowDoubleTapped">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <Grid.ContextFlyout>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem x:Uid="RowEditItem"
+                                                                    Icon="Edit"
+                                                                    KeyboardAcceleratorTextOverride="F2"
+                                                                    Click="OnRowEditClick" />
+                                                    <MenuFlyoutItem x:Uid="RowDeleteItem"
+                                                                    Icon="Delete"
+                                                                    KeyboardAcceleratorTextOverride="Delete"
+                                                                    Click="OnRowDeleteClick" />
+                                                </MenuFlyout>
+                                            </Grid.ContextFlyout>
+
+                                            <FontIcon Glyph="&#xE765;"
+                                                      FontSize="16"
+                                                      VerticalAlignment="Center"
+                                                      Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                      IsHitTestVisible="False"
+                                                      AutomationProperties.AccessibilityView="Raw" />
+
+                                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind ActionText}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{x:Bind KeyLabel}"
+                                                           Style="{StaticResource CaptionTextBlockStyle}"
+                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Border>
+
+                        <StackPanel x:Name="EmptyPanel"
+                                    Spacing="12"
+                                    MinHeight="160"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Visibility="Collapsed">
+                            <TextBlock x:Uid="EmptyText"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <Button x:Uid="EmptyAddButton"
+                                    Click="OnAddClick"
+                                    Style="{StaticResource AccentButtonStyle}"
+                                    HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Settings -->
+                <StackPanel Spacing="8">
+                    <TextBlock x:Uid="GeneralHeader" Style="{StaticResource BodyStrongTextBlockStyle}" />
+
+                    <StackPanel Spacing="4">
+                        <controls:SettingsCard x:Uid="ListenCard">
+                            <ToggleSwitch x:Name="ListenToggle"
+                                          x:Uid="ListenToggle"
+                                          IsOn="True"
+                                          Toggled="OnListenToggled" />
+                        </controls:SettingsCard>
+
+                        <controls:SettingsCard x:Uid="AutoStartCard">
+                            <ToggleSwitch x:Name="AutoStartToggle"
+                                          x:Uid="AutoStartToggle"
+                                          Toggled="OnAutoStartToggled" />
+                        </controls:SettingsCard>
+
+                        <controls:SettingsCard x:Uid="ConfigCard" Description="config.json">
+                            <Button x:Uid="OpenFolderButton" Click="OnOpenFolderClick" />
+                        </controls:SettingsCard>
+                    </StackPanel>
+
+                    <controls:SettingsExpander x:Name="AdvancedExpander" x:Uid="AdvancedExpander">
+                        <!-- The default 44 right padding lines items up with header content left of the chevron;
+                             this header has none, so align them with the cards above instead. -->
+                        <controls:SettingsExpander.Resources>
+                            <Thickness x:Key="SettingsExpanderItemPadding">58,8,16,8</Thickness>
+                        </controls:SettingsExpander.Resources>
+                        <controls:SettingsExpander.Items>
+                            <controls:SettingsCard x:Uid="DeviceMatchCard">
+                                <TextBox x:Name="DeviceMatchBox"
+                                         x:Uid="DeviceMatchBox"
+                                         MinWidth="240"
+                                         PlaceholderText="FE5A42B74943" />
+                            </controls:SettingsCard>
+                            <controls:SettingsCard x:Uid="CollectionCard">
+                                <TextBox x:Name="CollectionBox"
+                                         x:Uid="CollectionBox"
+                                         MinWidth="240"
+                                         PlaceholderText="Col05" />
+                            </controls:SettingsCard>
+                            <controls:SettingsCard x:Uid="ApplyCard">
+                                <Button x:Uid="ApplyButton" Click="OnApplyDeviceClick" />
+                            </controls:SettingsCard>
+                        </controls:SettingsExpander.Items>
+                    </controls:SettingsExpander>
+                </StackPanel>
+
+                <TextBlock x:Name="VersionText"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

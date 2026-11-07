@@ -1,6 +1,4 @@
-# YogaKey
-
-> 仓库：`yoga-keyboard-mapper` · 可执行文件：`YogaKey.exe`
+# Yoga Keyboard Mapper
 
 把 **Lenovo Yoga Book 9 蓝牙键盘**上那些「特殊键」（Copilot / 联想 / 星形 / 性能控制台等）重新映射成你想要的快捷键。
 
@@ -24,17 +22,40 @@ Windows 的键盘栈完全不认它，所以：
 - ❌ 注册表 ScanCode Map / SharpKeys —— 没有扫描码可映射
 - ❌ AutoHotkey 的普通热键 —— 同样收不到
 
-YogaKey 直接以 **Raw Input** 读取这份 HID 报告，拿到厂商键码后再用 `SendInput` 合成你指定的快捷键。
+Yoga Keyboard Mapper 直接以 **Raw Input** 读取这份 HID 报告，拿到厂商键码后再用 `SendInput` 合成你指定的快捷键。
 
 ## 功能
 
 - 🪟 **原生 WinUI 3 界面**：Windows 11 风格（Mica、SettingsCard、ContentDialog），支持浅色/深色主题
+- 🌐 **界面语言**：支持简体中文和 English，自动跟随 Windows 显示语言
 - ⌨️ 快捷键：`Ctrl+N` 新增、`F2` 编辑、`Delete` 删除
 - 🔍 **捕获**：按一下键盘上的特殊键，自动读出它的厂商键码（如 `0x12`）
 - 🧩 **映射**：每个键码绑定一个动作，内置 **49 个预置动作**，按 系统 / 窗口 / 编辑 / 应用 / 文件 / 媒体 分组
 - ⌨️ **自定义**：任意组合键（`ctrl+shift+t`）、启动任意程序（点「选择程序…」直接挑 `.exe`，或写 `run:"C:\Program Files\App\App.exe"`）、打开网址（`url:https://…`）
-- 🚀 **开机自启**：勾选即可写注册表 Run 项
-- 📄 配置为纯 JSON：`%LOCALAPPDATA%\YogaKey\config.json`
+- 🚀 **开机自启**：一键开启，登录后以最小化启动
+- 📄 配置为纯 JSON：`%LOCALAPPDATA%\YogaKeyboardMapper\config.json`
+
+## 下载安装
+
+到 [Releases](https://github.com/xuzhunzhi/yoga-keyboard-mapper/releases) 下载，任选一种（都是 x64，已自带 .NET 和 Windows App SDK 运行时，无需另装）：
+
+| 文件 | 说明 |
+| --- | --- |
+| `YogaKeyboardMapper-<版本>-x64-setup.exe` | **推荐**。安装到当前用户，不需要管理员权限，带开始菜单快捷方式和卸载项 |
+| `YogaKeyboardMapper-<版本>-x64.zip` / `.7z` | 便携版，解压后运行 `YogaKeyboardMapper.exe` |
+| `YogaKeyboardMapper-<版本>-x64.msix` + `YogaKeyboardMapper.cer` | MSIX 包（自签名），需要先信任证书，见下 |
+
+> exe 没有购买代码签名证书，首次运行时 SmartScreen 可能提示「Windows 已保护你的电脑」，点 **更多信息 → 仍要运行** 即可。可用 `SHA256SUMS.txt` 校验文件。
+
+**安装 MSIX**：先以管理员身份把证书导入「受信任的人」，再双击 `.msix` 安装：
+
+```powershell
+Import-Certificate -FilePath .\YogaKeyboardMapper.cer -CertStoreLocation Cert:\LocalMachine\TrustedPeople
+```
+
+（或右键 `.cer` → 安装证书 → 本地计算机 → 将所有的证书都放入下列存储 → 受信任的人。）
+
+MSIX 版的配置保存在 `%LOCALAPPDATA%\Packages\xuzhunzhi.YogaKeyboardMapper_<id>\LocalState\`，首次启动会自动复制 exe/zip 版已有的配置；开机自启用的是系统的「启动应用」，可在 **设置 → 应用 → 启动** 里管理。
 
 ## 构建
 
@@ -45,26 +66,37 @@ YogaKey 直接以 **Raw Input** 读取这份 HID 报告，拿到厂商键码后�
 - [Windows App SDK 1.8 运行时](https://learn.microsoft.com/windows/apps/windows-app-sdk/downloads)
 
 ```powershell
-git clone https://github.com/<you>/yoga-keyboard-mapper.git
+git clone https://github.com/xuzhunzhi/yoga-keyboard-mapper.git
 cd yoga-keyboard-mapper
-dotnet build src\YogaKey\YogaKey.csproj -c Release -p:Platform=x64
+dotnet build src\YogaKeyboardMapper\YogaKeyboardMapper.csproj -c Release -p:Platform=x64
 ```
 
 产物在：
 
 ```
-src\YogaKey\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\YogaKey.exe
+src\YogaKeyboardMapper\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\YogaKeyboardMapper.exe
 ```
+
+### 打包发布文件
+
+另需 [Inno Setup 6](https://jrsoftware.org/isinfo.php)（`winget install JRSoftware.InnoSetup`）和 7-Zip / NanaZip：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\package.ps1 -NewCertificate   # 第一次：生成自签名证书
+powershell -ExecutionPolicy Bypass -File tools\package.ps1
+```
+
+输出到 `artifacts\release\`。版本号取自 `.csproj` 的 `<Version>`。加上 `-StoreIdentityName`、`-StorePublisher`、`-StorePublisherDisplayName`（Partner Center「产品标识」页上的值）会再生成一个未签名的 `*-store.msix` 用于提交 Microsoft Store。
 
 ## 使用
 
-1. 启动 `YogaKey.exe`
+1. 启动 `YogaKeyboardMapper.exe`
 2. 点击 **开始捕获**，按一下键盘上那颗要改的键 → 显示 `0x12` 之类的键码
 3. 在「常用动作」里选一个，或直接在「动作」里填组合键
 4. **保存映射**
 5. 保持窗口开启（可以最小化）即可生效；想要开机就有，勾选 **开机自启**
 
-> 关闭窗口 = 停止监听。
+> 关闭窗口 = 停止监听。程序已在运行时再次启动 `YogaKeyboardMapper.exe`，会把已有窗口调到前台。
 
 ## 动作语法
 
@@ -83,7 +115,9 @@ src\YogaKey\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\YogaKey.exe
 
 ## 配置
 
-`%LOCALAPPDATA%\YogaKey\config.json`：
+`%LOCALAPPDATA%\YogaKeyboardMapper\config.json`：
+
+> 旧版本叫 YogaKey，配置在 `%LOCALAPPDATA%\YogaKey\`。新版首次启动会自动把 `config.json` 复制过来，开机自启项也会自动换成新名字；确认无误后可以删掉旧文件夹。
 
 ```json
 {
@@ -104,21 +138,31 @@ src\YogaKey\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\YogaKey.exe
 
 ## 排错
 
-- **按了没反应**：点「开始捕获」再按，看是否出现键码。没有键码说明这颗键不是通过 HID 报告发出的，YogaKey 帮不了。
+- **按了没反应**：点「开始捕获」再按，看是否出现键码。没有键码说明这颗键不是通过 HID 报告发出的，本程序帮不了。
 - **任务管理器没弹出，但日志有记录**：前台窗口可能以管理员权限运行，Windows 的 UIPI 会拦掉 `SendInput`。
 - **普通按键变得像按着什么 Win/Ctrl 快捷键**：说明修饰键被逻辑卡住了（程序在按键按下与抬起之间被关闭就会这样）。按一下对应的修饰键即可恢复；1.0 起整段组合键用**一次** `SendInput` 发出，且启动/退出时会主动释放所有修饰键。
-- 日志：`%LOCALAPPDATA%\YogaKey\app.log`
+- **映射突然全没了**：`config.json` 无法解析时，程序会把它改名为 `config.json.bad-<时间>` 再使用默认设置，修好后改回 `config.json` 即可。
+- 日志：`%LOCALAPPDATA%\YogaKeyboardMapper\app.log`
 
 ---
 
 ## English
 
-YogaKey remaps the vendor-specific keys of the **Lenovo Yoga Book 9 Bluetooth keyboard** on Windows.
+Yoga Keyboard Mapper remaps the vendor-specific keys of the **Lenovo Yoga Book 9 Bluetooth keyboard** on Windows.
 
-Those keys never reach the normal keyboard stack — they arrive as vendor-defined HID reports (`[03 10 00 XX]`), so PowerToys / SharpKeys / AutoHotkey cannot see them. YogaKey reads the raw input report, takes the vendor key code and synthesises a real shortcut with `SendInput`.
+Those keys never reach the normal keyboard stack — they arrive as vendor-defined HID reports (`[03 10 00 XX]`), so PowerToys / SharpKeys / AutoHotkey cannot see them. Yoga Keyboard Mapper reads the raw input report, takes the vendor key code and synthesises a real shortcut with `SendInput`.
+
+**Download** from [Releases](https://github.com/xuzhunzhi/yoga-keyboard-mapper/releases) (x64, self-contained, no runtime needed):
+
+- `*-setup.exe`: per-user installer, no admin rights needed (recommended)
+- `*.zip` / `*.7z`: portable
+- `*.msix` + `YogaKeyboardMapper.cer`: self-signed MSIX. First trust the certificate from an elevated PowerShell with `Import-Certificate -FilePath .\YogaKeyboardMapper.cer -CertStoreLocation Cert:\LocalMachine\TrustedPeople`, then open the `.msix`.
+
+The files aren't code-signed, so SmartScreen may warn on first run: choose **More info → Run anyway**.
 
 ```powershell
-dotnet build src\YogaKey\YogaKey.csproj -c Release -p:Platform=x64
+dotnet build src\YogaKeyboardMapper\YogaKeyboardMapper.csproj -c Release -p:Platform=x64
+powershell -ExecutionPolicy Bypass -File tools\package.ps1   # release files (needs Inno Setup 6 and 7-Zip)
 ```
 
 MIT licensed.
