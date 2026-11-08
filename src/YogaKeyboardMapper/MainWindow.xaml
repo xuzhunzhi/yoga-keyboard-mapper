@@ -212,6 +212,13 @@
                                           Toggled="OnFastWakeToggled" />
                         </controls:SettingsCard>
 
+                        <controls:SettingsCard x:Uid="CloseActionCard">
+                            <ComboBox x:Name="CloseActionBox"
+                                      x:Uid="CloseActionBox"
+                                      MinWidth="150"
+                                      SelectionChanged="OnCloseActionChanged" />
+                        </controls:SettingsCard>
+
                         <controls:SettingsCard x:Uid="ConfigCard" Description="config.json">
                             <Button x:Uid="OpenFolderButton" Click="OnOpenFolderClick" />
                         </controls:SettingsCard>

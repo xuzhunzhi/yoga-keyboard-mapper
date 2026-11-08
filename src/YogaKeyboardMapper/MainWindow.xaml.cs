@@ -94,6 +94,15 @@ public sealed partial class MainWindow : Window
         ListenToggle.IsOn = _config.ListenOnStartup;
         AutoStartToggle.IsOn = AutoStart.IsEnabled();
         FastWakeToggle.IsOn = _config.FastWake;
+        CloseActionBox.Items.Add(Res.Get("CloseAction_Ask"));
+        CloseActionBox.Items.Add(Res.Get("CloseAction_Tray"));
+        CloseActionBox.Items.Add(Res.Get("CloseAction_Exit"));
+        CloseActionBox.SelectedIndex = _config.CloseAction switch
+        {
+            "tray" => 1,
+            "exit" => 2,
+            _ => 0,
+        };
         DeviceMatchBox.Text = _config.DeviceMatch;
         CollectionBox.Text = _config.CollectionMatch;
         _initializing = false;
@@ -666,6 +675,9 @@ public sealed partial class MainWindow : Window
             if (dontAsk.IsChecked == true)
             {
                 _config.CloseAction = hide ? "tray" : "exit";
+                _initializing = true;
+                CloseActionBox.SelectedIndex = hide ? 1 : 2;
+                _initializing = false;
                 TrySave();
             }
 
@@ -716,6 +728,22 @@ public sealed partial class MainWindow : Window
     {
         _exiting = true;
         Close();
+    }
+
+    private void OnCloseActionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!_ready || _initializing)
+        {
+            return;
+        }
+
+        _config.CloseAction = CloseActionBox.SelectedIndex switch
+        {
+            1 => "tray",
+            2 => "exit",
+            _ => "ask",
+        };
+        TrySave();
     }
 
     private void OnFastWakeToggled(object sender, RoutedEventArgs e)

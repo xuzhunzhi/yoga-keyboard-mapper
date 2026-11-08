@@ -106,6 +106,24 @@
   <data name="FastWakeToggle.OffContent" xml:space="preserve">
     <value>关</value>
   </data>
+  <data name="CloseActionCard.Header" xml:space="preserve">
+    <value>关闭按钮</value>
+  </data>
+  <data name="CloseActionCard.Description" xml:space="preserve">
+    <value>点窗口右上角关闭时做什么，随时可以改</value>
+  </data>
+  <data name="CloseActionBox.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>关闭按钮</value>
+  </data>
+  <data name="CloseAction_Ask" xml:space="preserve">
+    <value>每次询问</value>
+  </data>
+  <data name="CloseAction_Tray" xml:space="preserve">
+    <value>隐藏到托盘</value>
+  </data>
+  <data name="CloseAction_Exit" xml:space="preserve">
+    <value>退出程序</value>
+  </data>
   <data name="ClosePrompt_Title" xml:space="preserve">
     <value>关闭窗口</value>
   </data>
