@@ -91,6 +91,21 @@
   <data name="AutoStartToggle.OffContent" xml:space="preserve">
     <value>Off</value>
   </data>
+  <data name="FastWakeCard.Header" xml:space="preserve">
+    <value>Wake the keyboard faster</value>
+  </data>
+  <data name="FastWakeCard.Description" xml:space="preserve">
+    <value>Scans for the keyboard while it sleeps, so it types again about 0.2 s after a key press. Only while the screen is on and the keyboard is disconnected</value>
+  </data>
+  <data name="FastWakeToggle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Wake the keyboard faster</value>
+  </data>
+  <data name="FastWakeToggle.OnContent" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="FastWakeToggle.OffContent" xml:space="preserve">
+    <value>Off</value>
+  </data>
   <data name="ConfigCard.Header" xml:space="preserve">
     <value>Configuration file</value>
   </data>

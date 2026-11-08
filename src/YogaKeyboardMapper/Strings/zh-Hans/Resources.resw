@@ -91,6 +91,21 @@
   <data name="AutoStartToggle.OffContent" xml:space="preserve">
     <value>关</value>
   </data>
+  <data name="FastWakeCard.Header" xml:space="preserve">
+    <value>快速唤醒键盘</value>
+  </data>
+  <data name="FastWakeCard.Description" xml:space="preserve">
+    <value>键盘休眠断开时提高蓝牙扫描频率，按键后约 0.2 秒即可输入。仅在亮屏且键盘断开时扫描</value>
+  </data>
+  <data name="FastWakeToggle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>快速唤醒键盘</value>
+  </data>
+  <data name="FastWakeToggle.OnContent" xml:space="preserve">
+    <value>开</value>
+  </data>
+  <data name="FastWakeToggle.OffContent" xml:space="preserve">
+    <value>关</value>
+  </data>
   <data name="ConfigCard.Header" xml:space="preserve">
     <value>配置文件</value>
   </data>

@@ -206,6 +206,12 @@
                                           Toggled="OnAutoStartToggled" />
                         </controls:SettingsCard>
 
+                        <controls:SettingsCard x:Uid="FastWakeCard">
+                            <ToggleSwitch x:Name="FastWakeToggle"
+                                          x:Uid="FastWakeToggle"
+                                          Toggled="OnFastWakeToggled" />
+                        </controls:SettingsCard>
+
                         <controls:SettingsCard x:Uid="ConfigCard" Description="config.json">
                             <Button x:Uid="OpenFolderButton" Click="OnOpenFolderClick" />
                         </controls:SettingsCard>

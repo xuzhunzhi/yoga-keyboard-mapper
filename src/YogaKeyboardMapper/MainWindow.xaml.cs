@@ -26,6 +26,7 @@ namespace YogaKeyboardMapper;
 public sealed partial class MainWindow : Window
 {
     private readonly RawKeyListener _listener = new();
+    private readonly KeyboardWakeBooster _wakeBooster = new();
     private readonly ObservableCollection<MappingItem> _items = new();
 
     private AppConfig _config = new();
@@ -88,6 +89,7 @@ public sealed partial class MainWindow : Window
         _initializing = true;
         ListenToggle.IsOn = _config.ListenOnStartup;
         AutoStartToggle.IsOn = AutoStart.IsEnabled();
+        FastWakeToggle.IsOn = _config.FastWake;
         DeviceMatchBox.Text = _config.DeviceMatch;
         CollectionBox.Text = _config.CollectionMatch;
         _initializing = false;
@@ -98,6 +100,11 @@ public sealed partial class MainWindow : Window
             StartListening();
         }
 
+        if (_config.FastWake)
+        {
+            _ = _wakeBooster.StartAsync(_config.DeviceMatch);
+        }
+
         RefreshList();
 
         Closed += (_, _) =>
@@ -105,6 +112,7 @@ public sealed partial class MainWindow : Window
             Log.Write("window closed");
             KeySender.ReleaseModifiers();
             _listener.Dispose();
+            _wakeBooster.Dispose();
         };
 
         Log.Write($"app started, device={_config.DeviceMatch}, collection={_config.CollectionMatch}");
@@ -575,6 +583,26 @@ public sealed partial class MainWindow : Window
         ShowStatus(Res.Get(enabled ? "Status_AutoStartOn" : "Status_AutoStartOff"), InfoBarSeverity.Informational);
     }
 
+    private void OnFastWakeToggled(object sender, RoutedEventArgs e)
+    {
+        if (!_ready || _initializing)
+        {
+            return;
+        }
+
+        if (FastWakeToggle.IsOn)
+        {
+            _ = _wakeBooster.StartAsync(_config.DeviceMatch);
+        }
+        else
+        {
+            _wakeBooster.Stop();
+        }
+
+        _config.FastWake = FastWakeToggle.IsOn;
+        TrySave();
+    }
+
     private void OnApplyDeviceClick(object sender, RoutedEventArgs e)
     {
         string device = DeviceMatchBox.Text.Trim();
@@ -600,6 +628,10 @@ public sealed partial class MainWindow : Window
 
         _listener.Stop();
         bool ok = StartListening();
+        if (_config.FastWake)
+        {
+            _ = _wakeBooster.StartAsync(_config.DeviceMatch);
+        }
 
         // StartListening already raised the error InfoBar; do not overwrite it with "applied".
         ShowStatus(

@@ -25,6 +25,9 @@ public sealed class AppConfig
     /// <summary>Whether the raw-input listener should be active after a restart.</summary>
     public bool ListenOnStartup { get; set; } = true;
 
+    /// <summary>Scan while the keyboard sleeps so it reconnects faster (see <see cref="KeyboardWakeBooster"/>).</summary>
+    public bool FastWake { get; set; } = true;
+
     public List<KeyMapping> Mappings { get; set; } = new();
 
     /// <summary>
