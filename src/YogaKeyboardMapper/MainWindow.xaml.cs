@@ -31,9 +31,12 @@ public sealed partial class MainWindow : Window
 
     private AppConfig _config = new();
     private EditKeyDialog? _captureDialog;
+    private TrayIcon? _tray;
     private bool _dialogOpen;
     private bool _initializing;
     private bool _ready;
+    private bool _exiting;
+    private bool _closePromptOpen;
     private int _statusToken;
     private double _titleBarIconScale;
     private IntPtr _windowHandle;
@@ -80,6 +83,7 @@ public sealed partial class MainWindow : Window
 
         _windowHandle = WindowNative.GetWindowHandle(this);
         ResizeAndCenter(920, 860);
+        AppWindow.Closing += OnAppWindowClosing;
 
         _config = AppConfig.Load(out string? configError);
         AutoStart.Refresh();
@@ -113,6 +117,8 @@ public sealed partial class MainWindow : Window
             KeySender.ReleaseModifiers();
             _listener.Dispose();
             _wakeBooster.Dispose();
+            _tray?.Dispose();
+            _tray = null;
         };
 
         Log.Write($"app started, device={_config.DeviceMatch}, collection={_config.CollectionMatch}");
@@ -135,6 +141,11 @@ public sealed partial class MainWindow : Window
     /// <summary>Restores and focuses the window (used when the app is launched a second time).</summary>
     public void BringToFront()
     {
+        if (!AppWindow.IsVisible)
+        {
+            AppWindow.Show();
+        }
+
         if (AppWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized } presenter)
         {
             presenter.Restore();
@@ -581,6 +592,130 @@ public sealed partial class MainWindow : Window
         }
 
         ShowStatus(Res.Get(enabled ? "Status_AutoStartOn" : "Status_AutoStartOff"), InfoBarSeverity.Informational);
+    }
+
+    // ------------------------------------------------------------ close / tray
+
+    private async void OnAppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
+    {
+        if (args.Cancel || _exiting)
+        {
+            return;
+        }
+
+        if (_config.CloseAction == "exit")
+        {
+            return;
+        }
+
+        // Hide instead of closing. While another dialog is open the close is simply
+        // ignored: showing a second ContentDialog would fail.
+        args.Cancel = true;
+        if (_config.CloseAction == "tray")
+        {
+            HideToTray();
+            return;
+        }
+
+        if (_dialogOpen || _closePromptOpen)
+        {
+            return;
+        }
+
+        await ConfirmCloseAsync();
+    }
+
+    private async Task ConfirmCloseAsync()
+    {
+        _closePromptOpen = true;
+        try
+        {
+            var dontAsk = new CheckBox
+            {
+                Content = Res.Get("ClosePrompt_DontAsk"),
+                Margin = new Thickness(0, 4, 0, 0),
+            };
+
+            var content = new StackPanel { Spacing = 8 };
+            content.Children.Add(new TextBlock
+            {
+                Text = Res.Get("ClosePrompt_Text"),
+                TextWrapping = TextWrapping.Wrap,
+            });
+            content.Children.Add(dontAsk);
+
+            var dialog = new ContentDialog
+            {
+                XamlRoot = RootGrid.XamlRoot,
+                Style = (Style)Application.Current.Resources["DefaultContentDialogStyle"],
+                Title = Res.Get("ClosePrompt_Title"),
+                Content = content,
+                PrimaryButtonText = Res.Get("ClosePrompt_Hide"),
+                SecondaryButtonText = Res.Get("ClosePrompt_Exit"),
+                CloseButtonText = Res.Get("ClosePrompt_Cancel"),
+                DefaultButton = ContentDialogButton.Primary,
+            };
+
+            ContentDialogResult result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.None)
+            {
+                return;
+            }
+
+            bool hide = result == ContentDialogResult.Primary;
+            if (dontAsk.IsChecked == true)
+            {
+                _config.CloseAction = hide ? "tray" : "exit";
+                TrySave();
+            }
+
+            if (hide)
+            {
+                HideToTray();
+            }
+            else
+            {
+                ExitApp();
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Write("close prompt error: " + ex.Message);
+            HideToTray();
+        }
+        finally
+        {
+            _closePromptOpen = false;
+        }
+    }
+
+    private void HideToTray()
+    {
+        if (_tray is null)
+        {
+            string iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "YogaKeyboardMapper.ico");
+            _tray = new TrayIcon(Res.Get("Tray_Tooltip"), Res.Get("Tray_Show"), Res.Get("Tray_Exit"), iconPath);
+            _tray.ShowRequested += RestoreFromTray;
+            _tray.ExitRequested += ExitApp;
+            _tray.ShowBalloon(Res.Get("Tray_BalloonTitle"), Res.Get("Tray_BalloonText"));
+        }
+
+        Log.Write("window hidden to tray");
+        AppWindow.Hide();
+    }
+
+    private void RestoreFromTray()
+    {
+        Log.Write("window restored from tray");
+        BringToFront();
+        _tray?.Dispose();
+        _tray = null;
+    }
+
+    private void ExitApp()
+    {
+        _exiting = true;
+        Close();
     }
 
     private void OnFastWakeToggled(object sender, RoutedEventArgs e)

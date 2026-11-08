@@ -28,6 +28,11 @@ public sealed class AppConfig
     /// <summary>Scan while the keyboard sleeps so it reconnects faster (see <see cref="KeyboardWakeBooster"/>).</summary>
     public bool FastWake { get; set; } = true;
 
+    /// <summary>
+    /// What the window's close button does: "ask" (first time only), "tray" or "exit".
+    /// </summary>
+    public string CloseAction { get; set; } = "ask";
+
     public List<KeyMapping> Mappings { get; set; } = new();
 
     /// <summary>

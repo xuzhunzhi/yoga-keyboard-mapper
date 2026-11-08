@@ -106,6 +106,39 @@
   <data name="FastWakeToggle.OffContent" xml:space="preserve">
     <value>关</value>
   </data>
+  <data name="ClosePrompt_Title" xml:space="preserve">
+    <value>关闭窗口</value>
+  </data>
+  <data name="ClosePrompt_Text" xml:space="preserve">
+    <value>关闭窗口后，程序可以隐藏到托盘继续在后台工作，也可以直接退出。</value>
+  </data>
+  <data name="ClosePrompt_Hide" xml:space="preserve">
+    <value>隐藏到托盘</value>
+  </data>
+  <data name="ClosePrompt_Exit" xml:space="preserve">
+    <value>退出程序</value>
+  </data>
+  <data name="ClosePrompt_Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ClosePrompt_DontAsk" xml:space="preserve">
+    <value>不再询问，记住这次的选择</value>
+  </data>
+  <data name="Tray_Tooltip" xml:space="preserve">
+    <value>Yoga Keyboard Mapper</value>
+  </data>
+  <data name="Tray_Show" xml:space="preserve">
+    <value>打开主窗口</value>
+  </data>
+  <data name="Tray_Exit" xml:space="preserve">
+    <value>退出</value>
+  </data>
+  <data name="Tray_BalloonTitle" xml:space="preserve">
+    <value>Yoga Keyboard Mapper 仍在运行</value>
+  </data>
+  <data name="Tray_BalloonText" xml:space="preserve">
+    <value>程序已隐藏到托盘，点击图标可以重新打开窗口。</value>
+  </data>
   <data name="ConfigCard.Header" xml:space="preserve">
     <value>配置文件</value>
   </data>

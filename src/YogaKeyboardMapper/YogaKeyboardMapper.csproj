@@ -18,7 +18,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <AssemblyTitle>Yoga Keyboard Mapper</AssemblyTitle>
     <Product>Yoga Keyboard Mapper</Product>
     <Description>Remap the vendor-special keys of a Lenovo Yoga Book 9 Bluetooth keyboard.</Description>
